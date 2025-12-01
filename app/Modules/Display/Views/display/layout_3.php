@@ -185,7 +185,7 @@
 <?php $this->endSection("style") ?>
 
 <video autoplay muted loop id="bg-video">
-    <source src="<?= base_url('assets/video/bg-abstract.mp4') ?>" type="video/mp4">
+    <source src="<?= base_url('/public/assets/video/bg-abstract.mp4') ?>" type="video/mp4">
 </video>
 
 <div class="wrapper">
