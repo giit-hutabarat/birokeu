@@ -58,7 +58,6 @@
     .brand-text span { color: var(--accent-gold); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; }
 
     /* === 2. AGENDA MODULE (HERO SECTION - BESAR) === */
-    /* Posisi: Tengah, mengambil ruang paling dominan */
     .agenda-hero {
         grid-column: 2 / 3;
         grid-row: 2 / 3;
@@ -155,18 +154,53 @@
         box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
     }
 
-    /* === 5. NEWS TICKER (FOOTER) === */
+    /* === 5. NEWS TICKER (FOOTER - FIXED NO NABRAK) === */
     .ticker-area {
         grid-column: 1 / -1;
         background: var(--accent-green);
         border-radius: 12px;
         display: flex; align-items: center;
-        padding: 0 20px;
+        padding: 0; /* PENTING: Padding parent 0 biar label nempel ujung */
         font-weight: 600;
-        overflow: hidden;
+        overflow: hidden; /* Hide anything outside border radius */
+        position: relative;
     }
-    .ticker-label { background: black; color: white; padding: 5px 15px; border-radius: 4px; font-size: 0.8rem; text-transform: uppercase; margin-right: 20px; white-space: nowrap; }
-    .ticker-track { white-space: nowrap; animation: marquee 30s linear infinite; font-size: 1.1rem; }
+
+    .ticker-label { 
+        background: black; 
+        color: white; 
+        padding: 0 25px; /* Space dalam label */
+        height: 100%; 
+        display: flex; align-items: center; 
+        font-size: 0.9rem; 
+        text-transform: uppercase; 
+        letter-spacing: 1px; 
+        white-space: nowrap; 
+        z-index: 20; /* Layer paling atas */
+        box-shadow: 5px 0 15px rgba(0,0,0,0.4); /* Bayangan pemisah */
+        position: relative;
+    }
+
+    /* CONTAINER PEMBATAS TEKS BERJALAN */
+    .ticker-viewport {
+        flex: 1; /* Mengisi sisa ruang kosong */
+        overflow: hidden; /* KUNCI UTAMA: Memotong teks saat menyentuh label */
+        height: 100%;
+        position: relative;
+        /* Efek fade halus di sebelah kiri label */
+        mask-image: linear-gradient(to right, transparent, black 20px);
+        -webkit-mask-image: linear-gradient(to right, transparent, black 20px);
+    }
+
+    .ticker-track { 
+        white-space: nowrap; 
+        animation: marquee 30s linear infinite; 
+        font-size: 1.1rem; 
+        display: inline-block;
+        padding-left: 100%; /* Mulai dari luar layar kanan */
+        will-change: transform;
+    }
+
     .ticker-item { margin-right: 50px; display: inline-block; }
 
     /* ANIMATIONS */
@@ -190,7 +224,6 @@
         .finance-panel { order: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } /* Finance jadi 2 kolom */
         .ticker-area { order: 5; position: fixed; bottom: 0; left: 0; width: 100%; border-radius: 0; z-index: 99; height: 40px; }
 
-        /* Adjustment */
         .brand-text h1 { font-size: 1.2rem; }
         .time-weather-card { padding: 15px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
         .weather-row { margin-top: 0; border: none; padding: 0; }
@@ -198,10 +231,14 @@
         .agenda-list-container { overflow-y: auto; } /* Manual Scroll di HP */
         .agenda-scroll-anim { animation: none; }
         
-        .sholat-card { display: none; } /* Hide sholat list detail di HP biar gak penuh, atau bisa dibikin horizontal scroll */
+        .sholat-card { display: none; } 
         
         .finance-card { min-height: 120px; }
         .big-number { font-size: 1.8rem; }
+        
+        /* Fix Ticker Mobile */
+        .ticker-label { font-size: 0.7rem; padding: 0 10px; }
+        .ticker-track { font-size: 0.9rem; }
     }
 </style>
 <?php $this->endSection("style") ?>
@@ -319,13 +356,19 @@
 
     <footer class="ticker-area">
         <div class="ticker-label">BREAKING NEWS</div>
-        <div class="ticker-track">
-            <span v-for="item in dataNews" :key="item.id" class="ticker-item">
-                <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
-            </span>
-            <span v-for="item in dataNews" :key="'d-'+item.id" class="ticker-item">
-                <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
-            </span>
+        
+        <div class="ticker-viewport">
+            <div class="ticker-track">
+                <span v-for="item in dataNews" :key="item.id" class="ticker-item">
+                    <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
+                </span>
+                <span v-for="item in dataNews" :key="'d-'+item.id" class="ticker-item">
+                    <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
+                </span>
+                <span v-if="dataNews.length == 0" class="ticker-item">
+                    SELAMAT DATANG DI DASHBOARD BIRO KEUANGAN KEJAKSAAN AGUNG RI... TERUS TINGKATKAN KINERJA DAN PELAYANAN...
+                </span>
+            </div>
         </div>
     </footer>
 
