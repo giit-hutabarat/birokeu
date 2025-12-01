@@ -1,298 +1,334 @@
 <?php $this->section("style"); ?>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
 
 <style>
     :root {
-        --bg-morning: linear-gradient(135deg, #1c92d2 0%, #f2fcfe 100%); /* Cerah */
-        --bg-working: #0f172a; /* Gelap Fokus */
-        --bg-evening: linear-gradient(to right, #2c3e50, #4ca1af); /* Kalem */
-        
-        --gold: #FFD700;
-        --green-adhyaksa: #0B6623;
-        --card-glass: rgba(255, 255, 255, 0.1);
-        --card-border: 1px solid rgba(255, 255, 255, 0.2);
+        --bg-color: #080808;
+        --card-bg: rgba(20, 20, 20, 0.6);
+        --card-border: 1px solid rgba(255, 255, 255, 0.08);
+        --accent-gold: #D4AF37;
+        --accent-green: #0e4d2a;
+        --text-muted: #888;
+        --glass-blur: blur(20px);
     }
 
-    /* BASE RESET */
+    /* GLOBAL RESET */
     html, body {
         height: 100vh; margin: 0; padding: 0;
-        font-family: 'Lato', sans-serif;
+        background-color: var(--bg-color);
+        background-image: radial-gradient(circle at 10% 20%, rgba(14, 77, 42, 0.2) 0%, transparent 40%),
+                          radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 40%);
+        font-family: 'Outfit', sans-serif;
         color: white;
-        overflow: hidden; /* Desktop default */
-        transition: background 1s ease;
+        overflow: hidden; /* Desktop TV Fix */
     }
 
-    .wrapper {
-        display: flex; height: 100vh; width: 100vw;
-        position: relative;
-    }
-
-    /* ===========================
-       1. SIDEBAR (STATIC)
-       =========================== */
-    .sidebar {
-        width: 300px;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(15px);
-        display: flex; flex-direction: column;
-        padding: 30px;
-        border-right: 1px solid rgba(255,255,255,0.1);
-        z-index: 20;
-    }
-
-    .brand-area { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; }
-    .brand-text h1 { font-family: 'Oswald'; font-size: 1.5rem; margin: 0; line-height: 1; text-transform: uppercase; }
-    .brand-text span { font-size: 0.8rem; color: var(--gold); letter-spacing: 1px; }
-
-    .clock-widget { text-align: center; margin-bottom: 40px; }
-    .clock-big { font-family: 'Oswald'; font-size: 4rem; line-height: 1; font-weight: 700; }
-    .date-small { font-size: 1rem; opacity: 0.8; text-transform: uppercase; margin-top: 5px; }
-
-    /* BOSS BOOSTER (Contextual Widget) */
-    .boss-widget {
-        background: rgba(255,255,255,0.1);
-        border-radius: 12px;
+    /* === GRID SYSTEM (BENTO LAYOUT) === */
+    .dashboard-wrapper {
+        display: grid;
+        grid-template-columns: 280px 1fr 320px; /* Sidebar Kiri, Konten Tengah, Sidebar Kanan */
+        grid-template-rows: 80px 1fr 60px; /* Header, Konten, Ticker */
+        gap: 20px;
+        height: 100vh;
         padding: 20px;
-        margin-top: auto; /* Push to bottom */
-        border-left: 5px solid var(--gold);
-        transition: all 0.5s ease;
+        box-sizing: border-box;
     }
-    .boss-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #ccc; margin-bottom: 5px; }
-    .boss-value { font-size: 1.5rem; font-weight: bold; font-family: 'Oswald'; }
-    .boss-sub { font-size: 0.9rem; color: var(--gold); margin-top: 5px; }
 
-    /* ===========================
-       2. MAIN CONTENT (DYNAMIC)
-       =========================== */
-    .main-stage {
-        flex: 1; position: relative;
-        padding: 30px;
+    /* COMMON CARD STYLE */
+    .bento-card {
+        background: var(--card-bg);
+        border: var(--card-border);
+        border-radius: 24px;
+        backdrop-filter: var(--glass-blur);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        overflow: hidden;
+        position: relative;
         display: flex; flex-direction: column;
+    }
+
+    /* === 1. HEADER (LOGO & INSTANSI) === */
+    .header-area {
+        grid-column: 1 / -1;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 20px;
+    }
+    .brand-box { display: flex; align-items: center; gap: 15px; }
+    .brand-text h1 { font-size: 1.8rem; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+    .brand-text span { color: var(--accent-gold); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; }
+
+    /* === 2. AGENDA MODULE (HERO SECTION - BESAR) === */
+    /* Posisi: Tengah, mengambil ruang paling dominan */
+    .agenda-hero {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+        padding: 30px;
+        position: relative;
+        background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%);
+    }
+    
+    .section-label { 
+        font-size: 0.85rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 20px; display: block;
+    }
+
+    /* Tampilan Agenda Card Besar */
+    .agenda-list-container {
+        flex: 1; overflow-y: hidden; position: relative;
+    }
+    .agenda-scroll-anim { animation: scrollUpAgenda 45s linear infinite; }
+    
+    .agenda-card-item {
+        background: rgba(255,255,255,0.03);
+        border-left: 4px solid var(--accent-gold);
+        padding: 25px;
+        margin-bottom: 15px;
+        border-radius: 0 16px 16px 0;
+        display: grid;
+        grid-template-columns: 80px 1fr; /* Tanggal Kiri, Info Kanan */
+        gap: 20px;
+        align-items: center;
+        transition: transform 0.3s ease;
+    }
+    .agenda-card-item:hover { transform: translateX(10px); background: rgba(255,255,255,0.07); }
+
+    /* Tanggal Agenda (Kotak Kiri) */
+    .date-box {
+        text-align: center;
+        background: rgba(0,0,0,0.3);
+        padding: 10px; border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+    .date-d { font-size: 1.8rem; font-weight: 800; line-height: 1; color: white; display: block; }
+    .date-m { font-size: 0.8rem; text-transform: uppercase; color: var(--accent-gold); font-weight: 600; display: block; margin-top: 3px; }
+    .date-time { font-size: 0.75rem; background: var(--accent-green); color: white; padding: 2px 5px; border-radius: 4px; margin-top: 5px; display: inline-block; }
+
+    /* Info Agenda (Kanan) */
+    .agenda-info h3 { margin: 0 0 8px 0; font-size: 1.4rem; font-weight: 600; line-height: 1.2; font-family: 'Playfair Display', serif; }
+    .agenda-meta { display: flex; gap: 15px; font-size: 0.9rem; color: var(--text-muted); }
+    .agenda-meta i { color: var(--accent-gold); margin-right: 5px; }
+
+    /* === 3. FINANCE MODULE (SIDEBAR KIRI) === */
+    .finance-panel {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+        display: flex; flex-direction: column; gap: 20px;
+    }
+    .finance-card {
+        flex: 1; padding: 20px;
+        background: radial-gradient(circle at top right, rgba(14, 77, 42, 0.4), transparent);
+    }
+    .big-number { font-size: 2.5rem; font-weight: 800; color: white; line-height: 1; margin: 10px 0; }
+    .sub-number { font-size: 0.9rem; color: #ccc; }
+    
+    /* Progress Bar Mewah */
+    .progress-lux { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 15px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-gold), #fff); border-radius: 10px; box-shadow: 0 0 10px var(--accent-gold); }
+
+    /* === 4. UTILITY MODULE (SIDEBAR KANAN) === */
+    .utility-panel {
+        grid-column: 3 / 4;
+        grid-row: 2 / 3;
+        display: flex; flex-direction: column; gap: 20px;
+    }
+
+    /* Jam & Cuaca */
+    .time-weather-card {
+        flex: 0 0 auto; padding: 25px; text-align: center;
+        background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
+    }
+    .clock-digital { font-size: 3rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+    .date-full { font-size: 0.9rem; color: var(--accent-gold); text-transform: uppercase; margin-top: 5px; letter-spacing: 1px; }
+    
+    .weather-row { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
+    .weather-temp { font-size: 1.8rem; font-weight: 700; }
+
+    /* Sholat List */
+    .sholat-card {
+        flex: 1; padding: 20px; overflow: hidden;
+    }
+    .sholat-row {
+        display: flex; justify-content: space-between; padding: 12px 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1rem;
+    }
+    .sholat-row.active {
+        background: var(--accent-gold); color: black; border-radius: 8px; font-weight: 800; border: none;
+        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+    }
+
+    /* === 5. NEWS TICKER (FOOTER) === */
+    .ticker-area {
+        grid-column: 1 / -1;
+        background: var(--accent-green);
+        border-radius: 12px;
+        display: flex; align-items: center;
+        padding: 0 20px;
+        font-weight: 600;
         overflow: hidden;
     }
+    .ticker-label { background: black; color: white; padding: 5px 15px; border-radius: 4px; font-size: 0.8rem; text-transform: uppercase; margin-right: 20px; white-space: nowrap; }
+    .ticker-track { white-space: nowrap; animation: marquee 30s linear infinite; font-size: 1.1rem; }
+    .ticker-item { margin-right: 50px; display: inline-block; }
 
-    /* TRANSITIONS */
-    .fade-enter-active, .fade-leave-active { transition: opacity 0.8s ease, transform 0.8s ease; }
-    .fade-enter-from { opacity: 0; transform: translateY(20px); }
-    .fade-leave-to { opacity: 0; transform: translateY(-20px); }
+    /* ANIMATIONS */
+    @keyframes scrollUpAgenda { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-    /* --- MODE 1: MORNING (Agenda & Weather Focus) --- */
-    .morning-grid {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 30px; height: 100%;
-    }
-    .morning-card {
-        background: rgba(0,0,0,0.5); border-radius: 20px; padding: 30px;
-        border: var(--card-border); display: flex; flex-direction: column;
-    }
-    .greeting { font-family: 'Oswald'; font-size: 3rem; margin-bottom: 20px; text-shadow: 2px 2px 10px rgba(0,0,0,0.3); }
-    
-    .weather-big { display: flex; align-items: center; gap: 30px; margin-bottom: 30px; }
-    .temp-huge { font-size: 6rem; font-family: 'Oswald'; font-weight: 700; line-height: 1; }
-    
-    /* --- MODE 2: WORKING (Data & TV Focus) --- */
-    .working-grid {
-        display: grid; grid-template-columns: 2fr 1fr; grid-template-rows: 2fr 1fr; gap: 20px; height: 100%;
-    }
-    .tv-box { grid-column: 1 / 2; grid-row: 1 / 3; background: black; border-radius: 15px; overflow: hidden; position: relative; }
-    .chart-box { grid-column: 2 / 3; grid-row: 1 / 2; background: rgba(15, 23, 42, 0.8); border-radius: 15px; padding: 20px; border: 1px solid rgba(255,255,255,0.1); }
-    .sholat-box { grid-column: 2 / 3; grid-row: 2 / 3; background: rgba(11, 102, 35, 0.8); border-radius: 15px; padding: 20px; display: flex; flex-direction: column; justify-content: center; }
-
-    /* --- MODE 3: EVENING (Summary Focus) --- */
-    .evening-container {
-        display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%;
-        text-align: center;
-    }
-    .summary-card {
-        background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
-        padding: 50px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.2);
-        max-width: 800px; width: 100%;
-    }
-    .achieve-ring {
-        width: 200px; height: 200px; border-radius: 50%;
-        border: 15px solid rgba(255,255,255,0.1);
-        border-top: 15px solid var(--gold);
-        margin: 0 auto 30px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 3rem; font-family: 'Oswald'; font-weight: bold;
-    }
-
-    /* COMMON COMPONENTS */
-    .list-item {
-        display: flex; align-items: center; gap: 15px; padding: 15px;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .time-badge { background: var(--gold); color: black; font-weight: bold; padding: 5px 10px; border-radius: 5px; }
-
-    /* ===========================
-       RESPONSIVE (MOBILE)
-       =========================== */
+    /* =========================================
+       RESPONSIVE (MOBILE & TABLET)
+       ========================================= */
     @media screen and (max-width: 1024px) {
         html, body { overflow-y: auto; height: auto; }
-        .wrapper { flex-direction: column; height: auto; }
-
-        /* Sidebar jadi Top Header */
-        .sidebar {
-            width: 100%; height: auto; flex-direction: row; justify-content: space-between; align-items: center;
-            padding: 15px;
+        
+        .dashboard-wrapper {
+            display: flex; flex-direction: column; height: auto; gap: 15px; padding: 15px;
         }
-        .brand-area { margin-bottom: 0; }
+
+        /* Urutan Tampilan Mobile */
+        .header-area { order: 1; padding: 0; margin-bottom: 10px; }
+        .utility-panel { order: 2; gap: 10px; } /* Jam Paling Atas */
+        .agenda-hero { order: 3; min-height: 400px; } /* Agenda Besar di tengah */
+        .finance-panel { order: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } /* Finance jadi 2 kolom */
+        .ticker-area { order: 5; position: fixed; bottom: 0; left: 0; width: 100%; border-radius: 0; z-index: 99; height: 40px; }
+
+        /* Adjustment */
         .brand-text h1 { font-size: 1.2rem; }
-        .clock-widget { display: none; } /* Hide clock di header mobile */
-        .boss-widget { display: none; } /* Hide boss widget di header mobile */
-
-        .main-stage { padding: 15px; height: auto; display: block; }
-
-        /* Reset Grids to Stack */
-        .morning-grid, .working-grid { display: flex; flex-direction: column; gap: 20px; }
+        .time-weather-card { padding: 15px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
+        .weather-row { margin-top: 0; border: none; padding: 0; }
         
-        .tv-box { height: 250px; } /* Fix height TV HP */
-        .chart-box, .sholat-box { height: auto; min-height: 200px; }
+        .agenda-list-container { overflow-y: auto; } /* Manual Scroll di HP */
+        .agenda-scroll-anim { animation: none; }
         
-        .temp-huge { font-size: 4rem; }
-        .greeting { font-size: 2rem; }
+        .sholat-card { display: none; } /* Hide sholat list detail di HP biar gak penuh, atau bisa dibikin horizontal scroll */
         
-        .summary-card { padding: 20px; }
-        .achieve-ring { width: 150px; height: 150px; font-size: 2rem; }
+        .finance-card { min-height: 120px; }
+        .big-number { font-size: 1.8rem; }
     }
 </style>
 <?php $this->endSection("style") ?>
 
-<div class="wrapper" :style="{ background: currentBg }">
+<div class="dashboard-wrapper">
     
-    <div class="sidebar">
-        <div class="brand-area">
-            <img src="<?php echo base_url('/' . ($logo == "" ? 'logo.png' : $logo)); ?>" width="50" />
+    <header class="header-area">
+        <div class="brand-box">
+            <img src="<?php echo base_url('/' . ($logo == "" ? 'logo.png' : $logo)); ?>" width="60" />
             <div class="brand-text">
                 <h1>Biro Keuangan</h1>
                 <span>KEJAKSAAN AGUNG RI</span>
             </div>
         </div>
+        <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);">
+            <div style="width: 10px; height: 10px; background: #00e676; border-radius: 50%; box-shadow: 0 0 10px #00e676;"></div>
+            <span style="font-size: 0.8rem;">SYSTEM ONLINE</span>
+        </div>
+    </header>
 
-        <div class="clock-widget">
-            <div class="clock-big">{{ jam }}</div>
-            <div class="date-small">{{ tanggal }}</div>
+    <aside class="finance-panel">
+        <div class="bento-card finance-card">
+            <span class="section-label"><i class="mdi mdi-chart-bar"></i> Realisasi Anggaran</span>
+            <div class="mt-auto">
+                <div class="d-flex align-items-end gap-2">
+                    <div class="big-number">{{ finance.persen }}%</div>
+                    <div class="mb-2 text-muted">Tercapai</div>
+                </div>
+                <div class="sub-number">{{ formatRupiah(finance.realisasi) }} / {{ formatRupiah(finance.pagu) }}</div>
+                <div class="progress-lux">
+                    <div class="progress-fill" :style="{ width: finance.persen + '%' }"></div>
+                </div>
+            </div>
         </div>
 
-        <div class="boss-widget">
-            <div class="boss-label">{{ bossData.label }}</div>
-            <div class="boss-value">{{ bossData.value }}</div>
-            <div class="boss-sub">{{ bossData.sub }}</div>
+        <div class="bento-card finance-card" style="background: radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.2), transparent);">
+            <span class="section-label"><i class="mdi mdi-cash-multiple"></i> Total PNBP</span>
+            <div class="mt-auto">
+                <div class="big-number" style="color: var(--accent-gold);">{{ formatRupiah(pnbp.total) }}</div>
+                <div class="sub-number"><i class="mdi mdi-arrow-up"></i> +15% dari Target</div>
+            </div>
         </div>
-    </div>
+    </aside>
 
-    <div class="main-stage">
-        <transition name="fade" mode="out-in">
+    <main class="bento-card agenda-hero">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <span class="section-label" style="font-size: 1.2rem; margin: 0;"><i class="mdi mdi-calendar-star"></i> AGENDA UTAMA</span>
+            <span class="badge bg-white text-dark">{{ dataAgenda.length }} Kegiatan Hari Ini</span>
+        </div>
 
-            <div v-if="mode === 'morning'" key="morning" class="morning-grid">
-                <div class="morning-card" style="justify-content: center;">
-                    <div class="greeting">SELAMAT PAGI, <br><span style="color:var(--gold)">PARA JAKSA HEBAT!</span></div>
-                    <div class="weather-big">
-                        <i class="wi wi-day-sunny text-warning" style="font-size: 5rem;"></i>
-                        <div>
-                            <div class="temp-huge">28°</div>
-                            <div class="h4 m-0">Jakarta Selatan</div>
-                        </div>
-                    </div>
-                    <div class="alert alert-light bg-opacity-25 border-0 text-white">
-                        <i class="mdi mdi-lightbulb-on text-warning"></i> 
-                        <strong>Quote Hari Ini:</strong> "Integritas adalah melakukan hal yang benar, bahkan ketika tidak ada yang melihat."
-                    </div>
-                </div>
-                <div class="morning-card">
-                    <h3 class="font-oswald mb-4 border-bottom pb-2">AGENDA HARI INI</h3>
-                    <div style="overflow-y: auto; flex: 1;">
-                        <div v-for="(item, i) in dataAgenda" :key="i" class="list-item">
-                            <div class="time-badge">{{ item.waktu.substring(0,5) }}</div>
-                            <div>
-                                <div class="fw-bold fs-5">{{ item.nama_agenda }}</div>
-                                <small class="text-white-50">{{ item.tempat_agenda }}</small>
-                            </div>
-                        </div>
-                         <div v-if="dataAgenda.length === 0" class="text-center mt-5 opacity-50">Belum ada agenda.</div>
-                    </div>
-                </div>
+        <div class="agenda-list-container">
+            <div v-if="dataAgenda.length === 0" class="h-100 d-flex align-items-center justify-content-center text-muted">
+                <h3>TIDAK ADA JADWAL KEGIATAN</h3>
             </div>
-
-            <div v-else-if="mode === 'working'" key="working" class="working-grid">
-                <div class="tv-box">
-                    <div style="position:absolute; top:15px; left:15px; background:red; padding:2px 10px; font-weight:bold; border-radius:4px; z-index:10;">LIVE MONITOR</div>
-                    <?php 
-                        $finalVideoId = $videoId;
-                        if (empty($finalVideoId)) { $finalVideoId = 'r3wW21ddf9U'; } // Default News
-                    ?>
-                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/<?= $finalVideoId; ?>?autoplay=1&mute=1&controls=0&showinfo=0&loop=1&playlist=<?= $finalVideoId; ?>" frameborder="0" allow="autoplay"></iframe>
-                </div>
-
-                <div class="chart-box">
-                    <h4 class="font-oswald mb-3 text-warning">REALISASI ANGGARAN LIVE</h4>
-                    <div class="d-flex align-items-end gap-2" style="height: 150px; padding-bottom: 10px; border-bottom: 1px solid #555;">
-                        <div style="flex:1; background:rgba(255,255,255,0.1); height:100%; border-radius:5px; position:relative;">
-                             <div style="position:absolute; bottom:0; width:100%; background:var(--green-adhyaksa); height:65%; border-radius:5px; transition: height 1s;"></div>
-                             <div style="position:absolute; bottom: -25px; width:100%; text-align:center; font-size:0.8rem;">REALISASI</div>
-                        </div>
-                        <div style="flex:1; background:rgba(255,255,255,0.1); height:100%; border-radius:5px; position:relative;">
-                             <div style="position:absolute; bottom:0; width:100%; background:var(--gold); height:70%; border-radius:5px; transition: height 1s;"></div>
-                             <div style="position:absolute; bottom: -25px; width:100%; text-align:center; font-size:0.8rem;">TARGET</div>
-                        </div>
+            
+            <div v-else class="agenda-scroll-anim">
+                <div v-for="(item, i) in dataAgenda" :key="i" class="agenda-card-item">
+                    <div class="date-box">
+                        <span class="date-d">{{ getDayNum(item.waktu_tanggal) }}</span>
+                        <span class="date-m">{{ getMonthName(item.waktu_tanggal) }}</span>
+                        <span class="date-time">{{ item.waktu.substring(0,5) }}</span>
                     </div>
-                    <div class="d-flex justify-content-between mt-4">
-                         <div>
-                             <small class="text-muted d-block">PENYERAPAN</small>
-                             <span class="fs-2 fw-bold font-oswald">{{ finance.persen }}%</span>
-                         </div>
-                         <div class="text-end">
-                             <small class="text-muted d-block">SISA ANGGARAN</small>
-                             <span class="fs-4 fw-bold text-danger">{{ formatRupiah(finance.sisa) }}</span>
-                         </div>
+                    <div class="agenda-info">
+                        <h3>{{ item.nama_agenda }}</h3>
+                        <div class="agenda-meta">
+                            <span><i class="mdi mdi-map-marker"></i> {{ item.tempat_agenda }}</span>
+                            <span><i class="mdi mdi-clock-outline"></i> {{ item.waktu }} WIB</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="sholat-box">
-                     <div class="text-center">
-                         <i class="mdi mdi-mosque fs-1 text-white-50"></i>
-                         <h5 class="mt-2 text-warning">MENUJU SHOLAT {{ nextPrayer }}</h5>
-                         <div class="fs-1 fw-bold font-oswald">{{ jadwalSholat[nextPrayer] }}</div>
-                     </div>
-                </div>
-            </div>
-
-            <div v-else key="evening" class="evening-container">
-                <div class="summary-card">
-                    <h2 class="font-oswald mb-5">LAPORAN HARIAN BIRO</h2>
-                    
-                    <div class="achieve-ring">
-                        {{ finance.persen }}%
+                <div v-for="(item, i) in dataAgenda" :key="'d-'+i" class="agenda-card-item">
+                    <div class="date-box">
+                        <span class="date-d">{{ getDayNum(item.waktu_tanggal) }}</span>
+                        <span class="date-m">{{ getMonthName(item.waktu_tanggal) }}</span>
+                        <span class="date-time">{{ item.waktu.substring(0,5) }}</span>
                     </div>
-                    
-                    <h4 class="mb-3">Status Penyerapan Hari Ini: <span class="text-success">OPTIMAL</span></h4>
-                    <p class="text-white-50 mb-4">Terima kasih atas kerja keras Anda hari ini. Pastikan semua dokumen telah tersimpan sebelum pulang.</p>
-                    
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="bg-dark p-3 rounded">
-                                <small class="d-block text-muted">DOKUMEN CAIR</small>
-                                <strong class="fs-4">12 SPM</strong>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="bg-dark p-3 rounded">
-                                <small class="d-block text-muted">PNBP MASUK</small>
-                                <strong class="fs-4 text-warning">Rp 450 Jt</strong>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="bg-dark p-3 rounded">
-                                <small class="d-block text-muted">AGENDA BESOK</small>
-                                <strong class="fs-4 text-info">3 Rapat</strong>
-                            </div>
+                    <div class="agenda-info">
+                        <h3>{{ item.nama_agenda }}</h3>
+                        <div class="agenda-meta">
+                            <span><i class="mdi mdi-map-marker"></i> {{ item.tempat_agenda }}</span>
+                            <span><i class="mdi mdi-clock-outline"></i> {{ item.waktu }} WIB</span>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </main>
 
-        </transition>
-    </div>
+    <aside class="utility-panel">
+        <div class="bento-card time-weather-card">
+            <div class="clock-digital">{{ jam }}</div>
+            <div class="date-full">{{ tanggal }}</div>
+            
+            <div class="weather-row">
+                <i class="wi wi-day-cloudy" style="font-size: 2.5rem; color: #fff;"></i>
+                <div class="text-start">
+                    <div class="weather-temp">29°C</div>
+                    <div style="font-size: 0.8rem; opacity: 0.7;">Jakarta Selatan</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bento-card sholat-card">
+            <span class="section-label mb-3">Jadwal Sholat</span>
+            <div style="overflow-y: auto;">
+                <div v-for="(time, name) in jadwalSholat" :key="name" 
+                     class="sholat-row" :class="{ 'active': name === nextPrayer }">
+                    <span>{{ name }}</span>
+                    <span>{{ time }}</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <footer class="ticker-area">
+        <div class="ticker-label">BREAKING NEWS</div>
+        <div class="ticker-track">
+            <span v-for="item in dataNews" :key="item.id" class="ticker-item">
+                <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
+            </span>
+            <span v-for="item in dataNews" :key="'d-'+item.id" class="ticker-item">
+                <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
+            </span>
+        </div>
+    </footer>
+
 </div>
 
 <?php $this->section("js") ?>
@@ -303,80 +339,76 @@
         ...dataVue,
         jam: "", tanggal: "",
         
-        // Context State
-        mode: 'morning', // morning, working, evening
-        currentBg: 'var(--bg-morning)',
+        // Data Modules
+        dataNews: [], dataAgenda: [],
+        finance: { pagu: 15000000000, realisasi: 10500000000, sisa: 4500000000, persen: 70 },
+        pnbp: { total: 1250000000 },
+        jadwalSholat: { Subuh: '04:12', Dzuhur: '11:51', Ashar: '15:15', Maghrib: '17:58', Isya: '19:12' },
+        nextPrayer: 'Ashar',
         
-        // Data
-        dataAgenda: [],
-        finance: { pagu: 10000000000, realisasi: 6500000000, sisa: 3500000000, persen: 65 },
-        jadwalSholat: { Subuh: '04:15', Dzuhur: '11:55', Ashar: '15:15', Maghrib: '18:00', Isya: '19:10' },
-        nextPrayer: 'Dzuhur',
-        
-        // Boss Booster Data (Dynamic)
-        bossData: { label: 'TARGET HARI INI', value: 'Rp 500 Juta', sub: 'Pencairan SPM' }
+        // Dummy Agenda with Date (Simulasi)
+        // Di real app, pastikan API lo kirim field 'waktu_tanggal' format YYYY-MM-DD
+        dataAgenda: [] 
     }
 
     createdVue = function() {
         setInterval(this.updateTime, 1000);
+        this.getNews(); 
         this.getAgenda();
-        
-        // Initial Check Mode
-        this.checkMode();
-        // Cek mode setiap 1 menit
-        setInterval(this.checkMode, 60000);
     }
 
     mountedVue = function() {
-        // Fetch data
+        setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
+        setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
     }
 
     methodsVue = {
         ...methodsVue,
-
+        
         formatRupiah: function(num) {
+            if(num >= 1000000000) return (num/1000000000).toFixed(1) + ' M';
             return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
         },
 
         updateTime: function() {
             const d = new Date();
             this.jam = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
-            const m = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
-            this.tanggal = `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
+            const days = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+            const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
+            this.tanggal = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+            
+            // Logic simple next prayer
+            const h = d.getHours();
+            if(h<4) this.nextPrayer='Subuh'; else if(h<12) this.nextPrayer='Dzuhur';
+            else if(h<15) this.nextPrayer='Ashar'; else if(h<18) this.nextPrayer='Maghrib';
+            else if(h<19) this.nextPrayer='Isya'; else this.nextPrayer='Subuh';
         },
 
-        // INOVASI UTAMA: TIME-BASED UX
-        checkMode: function() {
-            const h = new Date().getHours();
-            
-            // Testing: Lo bisa ganti angka ini manual buat liat preview mode lain
-            // Misal: if (true) ...
-            
-            if (h >= 6 && h < 10) {
-                // PAGI (06:00 - 10:00)
-                this.mode = 'morning';
-                this.currentBg = 'var(--bg-morning)';
-                this.bossData = { label: 'TARGET HARI INI', value: 'Rp 500 Juta', sub: 'Estimasi Pencairan' };
-            } 
-            else if (h >= 10 && h < 15) {
-                // KERJA (10:00 - 15:00)
-                this.mode = 'working';
-                this.currentBg = 'var(--bg-working)';
-                this.bossData = { label: 'STATUS SAAT INI', value: 'ON TRACK', sub: 'Semua Satker Aman' };
-                
-                // Set Next Prayer
-                if(h < 12) this.nextPrayer = 'Dzuhur';
-                else if(h < 15) this.nextPrayer = 'Ashar';
-            } 
-            else {
-                // SORE/MALAM (15:00++)
-                this.mode = 'evening';
-                this.currentBg = 'var(--bg-evening)';
-                this.bossData = { label: 'TOTAL CAPAIAN', value: 'Rp 480 Juta', sub: '96% dari Target Harian' };
-            }
+        // Helpers untuk Agenda Date Box
+        getDayNum: function(dateStr) {
+            // Asumsi dateStr = "2025-12-01" or handled by backend
+            // Jika kosong pakai tanggal hari ini
+            if(!dateStr) return new Date().getDate();
+            return new Date(dateStr).getDate();
+        },
+        getMonthName: function(dateStr) {
+            const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
+            if(!dateStr) return m[new Date().getMonth()];
+            return m[new Date(dateStr).getMonth()];
         },
 
-        getAgenda: function() { axios.get('<?= base_url() ?>/api/display/agenda').then(res => { if(res.data.status) this.dataAgenda = res.data.data; }).catch(e=>{}); },
+        getNews: function() { axios.get('<?= base_url() ?>/api/news/news').then(res => { if(res.data.status) this.dataNews = res.data.data; }).catch(e=>{}); },
+        getAgenda: function() { 
+            axios.get('<?= base_url() ?>/api/display/agenda').then(res => { 
+                if(res.data.status) {
+                    this.dataAgenda = res.data.data; 
+                    // Simulasi nambahin tanggal field kalo di API lo belom ada
+                    this.dataAgenda.forEach(item => {
+                        if(!item.waktu_tanggal) item.waktu_tanggal = new Date().toISOString().slice(0,10);
+                    });
+                }
+            }).catch(e=>{}); 
+        },
     }
 </script>
 <?php $this->endSection("js") ?>
