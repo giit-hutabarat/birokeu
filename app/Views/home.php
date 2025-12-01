@@ -146,7 +146,7 @@ $userFullname = session()->get('fullname') ?? 'ADMIN';
                                 <!-- AKHIR KARTU PERTAMA -->
 
 
-<v-col cols="12" sm="6" md="4">
+<!--<v-col cols="12" sm="6" md="4">
     <v-card 
         class="card-menu mx-auto fill-height pt-8 pb-6 px-4 text-center" 
         color="#450a0a" 
@@ -155,12 +155,12 @@ $userFullname = session()->get('fullname') ?? 'ADMIN';
         elevation="15" 
         style="border: 1px solid #ef4444;"
     >
-        <div class="icon-circle" style="background: rgba(239, 68, 68, 0.15);"><v-icon size="45" color="#ef4444">mdi-gavel</v-icon></div>
+        <<div class="icon-circle" style="background: rgba(239, 68, 68, 0.15);"><v-icon size="45" color="#ef4444">mdi-gavel</v-icon></div>
         <h2 class="menu-title red--text text--accent-2">Cetak Sidang</h2>
         <p class="menu-desc">Cetak dokumen persidangan (P-37 & P-38).</p>
         <v-btn color="#ef4444" class="btn-akses white--text elevation-5">Masuk Menu <v-icon right small>mdi-login</v-icon></v-btn>
     </v-card>
-</v-col>    
+</v-col>    -->
 
                                 <v-col cols="12" sm="6" md="4">
                                     <v-card class="card-menu mx-auto fill-height pt-8 pb-6 px-4 text-center" color="#064e3b" dark href="<?= base_url('display'); ?>" target="_blank" ripple elevation="10">
