@@ -267,7 +267,7 @@
         <div class="col-kiri">
             <div class="card-custom box-sidang" style="height: 100%;">
                 <div class="card-custom-header bg-header-sidang">
-                    <i class="mdi mdi-gavel me-2"></i> Jadwal Kegiatan
+                    <i class="mdi mdi-gavel me-2"></i> jadwal Kegaitan
                 </div>
                 <div class="card-custom-body body-dark">
                     <div v-if="loadingSidang" class="text-center p-3">Loading Data...</div>
@@ -353,15 +353,15 @@
                             <div class="icon-box yt"><i class="mdi mdi-youtube"></i></div>
                         </div>
                         <div class="sosmed-center">
-                            <div class="title-l1">KEJAKSAAN</div>
-                            <div class="title-l2">NEGERI</div>
-                            <div class="title-l3">BOYOLALI</div>
+                            <div class="title-l1">BIRO KEUANGAN</div>
+                            <div class="title-l2">KEJAKSAAN</div>
+                            <div class="title-l3">AGUNG RI</div>
                         </div>
                         <div class="sosmed-right">
-                            <div class="link-badge">
+                            <!--<div class="link-badge">
                                 <i class="mdi mdi-earth link-icon"></i>
                                 <span class="link-text">kejari-boyolali.go.id</span>
-                            </div>
+                            </div>-->
                         </div>
                     </div>
                 </div>
