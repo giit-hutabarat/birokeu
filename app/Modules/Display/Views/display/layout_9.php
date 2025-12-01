@@ -267,7 +267,7 @@
         <div class="col-kiri">
             <div class="card-custom box-sidang" style="height: 100%;">
                 <div class="card-custom-header bg-header-sidang">
-                    <i class="mdi mdi-gavel me-2"></i> jadwal Kegaitan
+                    <i class="mdi mdi-gavel me-2"></i> Jadwal Kegiatan
                 </div>
                 <div class="card-custom-body body-dark">
                     <div v-if="loadingSidang" class="text-center p-3">Loading Data...</div>
