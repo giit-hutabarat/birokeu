@@ -267,11 +267,11 @@
         <div class="col-kiri">
             <div class="card-custom box-sidang" style="height: 100%;">
                 <div class="card-custom-header bg-header-sidang">
-                    <i class="mdi mdi-gavel me-2"></i> Sidang Hari Ini
+                    <i class="mdi mdi-gavel me-2"></i> Jadwal Kegiatan
                 </div>
                 <div class="card-custom-body body-dark">
                     <div v-if="loadingSidang" class="text-center p-3">Loading Data...</div>
-                    <div v-if="!loadingSidang && dataSidang.length === 0" class="text-center p-3">Tidak ada jadwal sidang.</div>
+                    <div v-if="!loadingSidang && dataSidang.length === 0" class="text-center p-3">Tidak ada jadwal kegiatan.</div>
                     
                     <div style="height: 100%; overflow: hidden;">
                         <ul v-if="!loadingSidang && dataSidang.length > 0" class="scroll-list-anim">
