@@ -7,7 +7,7 @@ use App\Modules\Setting\Models\SettingModel;
 use App\Modules\Setting\Models\KotaModel;
 use App\Modules\Layout\Models\LayoutModel;
 
-class Setting extends BaseControllerApi
+class ApiSetting extends BaseControllerApi
 {
     protected $format       = 'json';
     protected $modelName    = SettingModel::class;
