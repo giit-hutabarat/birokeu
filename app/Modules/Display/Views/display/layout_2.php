@@ -4,7 +4,7 @@
 
 <style>
     :root {
-        --sidebar-w: 25vw; /* Lebar Sidebar 25% layar */
+        --sidebar-w: 25vw;
         --bg-dark: #0f172a;
         --sidebar-bg: rgba(15, 23, 42, 0.95);
         --gold: #F59E0B;
@@ -13,14 +13,17 @@
         --glass-border: 1px solid rgba(255,255,255,0.1);
     }
 
+    /* Reset & Base */
     html, body {
-        height: 100vh; margin: 0; overflow: hidden;
+        height: 100vh; margin: 0; padding: 0;
         background: #000; font-family: 'Inter', sans-serif; color: white;
+        overflow: hidden; /* Default TV: No Scroll */
     }
 
-    /* --- LAYOUT GRID --- */
+    /* --- LAYOUT GRID UTAMA --- */
     .dashboard-container {
         display: flex; height: 100vh; width: 100vw;
+        transition: all 0.3s ease;
     }
 
     /* 1. SIDEBAR (KIRI) */
@@ -30,16 +33,16 @@
         border-right: 2px solid var(--gold);
         display: flex; flex-direction: column;
         padding: 2rem;
-        z-index: 10;
+        z-index: 100; /* Sidebar selalu di atas */
         box-shadow: 10px 0 50px rgba(0,0,0,0.5);
+        position: relative;
     }
 
-    /* Jam & Boss Booster Area */
     .header-section { margin-bottom: 2rem; text-align: center; position: relative; }
     .clock-big { font-family: 'Chakra Petch', sans-serif; font-size: 4rem; font-weight: 700; line-height: 1; }
     .date-small { color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 0.5rem; }
     
-    /* Boss Booster: Pulse Indicator */
+    /* Boss Booster */
     .boss-indicator {
         position: absolute; top: 10px; right: 10px;
         width: 12px; height: 12px; border-radius: 50%;
@@ -50,7 +53,7 @@
     .boss-indicator.warning { background: var(--gold); box-shadow: 0 0 15px var(--gold); }
     .boss-indicator.danger { background: var(--accent-red); box-shadow: 0 0 15px var(--accent-red); animation: pulse-fast 0.5s infinite; }
 
-    /* Weather Widget */
+    /* Widgets Sidebar */
     .weather-card {
         background: rgba(255,255,255,0.05); border-radius: 15px; padding: 1.5rem;
         display: flex; align-items: center; justify-content: space-between;
@@ -58,28 +61,32 @@
     }
     .weather-temp { font-size: 2.5rem; font-weight: 700; font-family: 'Chakra Petch'; }
     
-    /* Sholat Schedule */
-    .sholat-container { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .sholat-container { flex: 1; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
     .sholat-item {
         display: flex; justify-content: space-between; padding: 12px 15px;
         background: rgba(255,255,255,0.03); border-radius: 8px; font-weight: 500;
         transition: all 0.3s;
     }
     .sholat-item.next-prayer {
-        background: var(--gold); color: #000; font-weight: 800; transform: scale(1.05);
+        background: var(--gold); color: #000; font-weight: 800; transform: scale(1.02);
         box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3); border: none;
     }
+
+    .qr-area { margin-top: auto; text-align: center; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
 
     /* 2. MAIN CONTENT (KANAN) */
     .main-content {
         flex: 1; display: flex; flex-direction: column;
         background: #1e293b;
+        height: 100%; /* Full height di desktop */
+        overflow: hidden;
     }
 
-    /* Top: TV / Video Area (Fixed Aspect Ratio 16:9 ish) */
+    /* TV Section */
     .tv-section {
-        flex: 55; /* 55% Tinggi */
+        flex: 55; /* 55% Tinggi Layar */
         background: #000; position: relative; overflow: hidden;
+        min-height: 300px; /* Minimal height biar gak gepeng */
     }
     .tv-wrapper { width: 100%; height: 100%; }
     .tv-label {
@@ -89,28 +96,27 @@
         font-size: 0.9rem; z-index: 20; display: flex; align-items: center; gap: 8px;
     }
 
-    /* Middle: Data & Agenda Split */
+    /* Data Section (Finance & Agenda) */
     .data-section {
-        flex: 45; /* 45% Tinggi */
+        flex: 45; /* 45% Tinggi Layar */
         display: flex; border-top: 1px solid rgba(255,255,255,0.1);
         background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+        overflow: hidden;
     }
 
-    /* Data: Keuangan (Carousel) */
     .finance-area {
         flex: 6; /* 60% Lebar */
         padding: 2rem; border-right: 1px solid rgba(255,255,255,0.1);
         position: relative; display: flex; flex-direction: column; justify-content: center;
     }
     
-    /* Data: Agenda List */
     .agenda-area {
         flex: 4; /* 40% Lebar */
         padding: 1.5rem; background: rgba(0,0,0,0.2);
         display: flex; flex-direction: column;
     }
-    .agenda-title { font-size: 1.1rem; color: var(--gold); font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; border-bottom: 2px solid var(--gold); padding-bottom: 5px; display: inline-block;}
     
+    .agenda-title { font-size: 1.1rem; color: var(--gold); font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; border-bottom: 2px solid var(--gold); padding-bottom: 5px; display: inline-block;}
     .agenda-list { overflow: hidden; flex: 1; position: relative; }
     .scroller-agenda { animation: scrollUp 40s linear infinite; }
     .agenda-item {
@@ -120,12 +126,15 @@
     .agenda-time { font-weight: 800; color: var(--accent-green); font-size: 0.9rem; }
     .agenda-desc { font-size: 0.95rem; line-height: 1.2; margin-top: 2px; }
 
-    /* Bottom: Running Text */
+    /* Footer Ticker */
     .ticker-bar {
-        height: 50px; background: #b91c1c; /* Merah Kejaksaan */
+        height: 50px; background: #b91c1c; flex-shrink: 0;
         display: flex; align-items: center; overflow: hidden; z-index: 20;
     }
     .ticker-content { white-space: nowrap; padding-left: 100%; animation: marquee 25s linear infinite; font-size: 1.2rem; font-weight: 600; }
+
+    .progress-custom { height: 25px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; margin-top: 10px; }
+    .bar-fill { height: 100%; background: var(--accent-green); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-size: 0.8rem; font-weight: bold; color: #000; transition: width 1s ease; }
 
     /* Animations */
     @keyframes pulse { 0% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.6; transform: scale(1); } }
@@ -133,9 +142,83 @@
     @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
     @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
 
-    /* Helper Chart Bar */
-    .progress-custom { height: 25px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; margin-top: 10px; }
-    .bar-fill { height: 100%; background: var(--accent-green); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-size: 0.8rem; font-weight: bold; color: #000; transition: width 1s ease; }
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS (Mobile & Tablet)
+       ========================================================================== */
+    @media screen and (max-width: 1024px) {
+        /* Ubah container jadi scrollable vertikal */
+        html, body { overflow-y: auto; height: auto; }
+        
+        .dashboard-container {
+            flex-direction: column; /* Stack ke bawah */
+            height: auto;
+            width: 100%;
+        }
+
+        /* 1. SIDEBAR JADI HEADER */
+        .sidebar {
+            width: 100%;
+            height: auto;
+            border-right: none;
+            border-bottom: 3px solid var(--gold);
+            padding: 1.5rem;
+            box-shadow: none;
+        }
+
+        .header-section { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 1rem; text-align: left;
+        }
+        .header-section .clock-big { font-size: 2.5rem; }
+        .header-section .date-small { font-size: 0.9rem; margin-top: 0; }
+        
+        /* Sembunyikan elemen kurang penting di mobile biar gak panjang banget */
+        .weather-card, .qr-area { display: none; } 
+        
+        .sholat-container { 
+            flex-direction: row; flex-wrap: wrap; gap: 5px; 
+            justify-content: center; /* Sholat jadi tombol-tombol kecil */
+        }
+        .sholat-item { padding: 5px 10px; font-size: 0.8rem; flex: 1 0 30%; text-align: center; }
+
+        /* 2. MAIN CONTENT JADI STACK */
+        .main-content { width: 100%; height: auto; display: block; }
+        
+        .tv-section {
+            height: 250px; /* Tinggi video fix di HP */
+            flex: none; /* Matikan flex ratio */
+        }
+
+        .data-section {
+            flex-direction: column; /* Agenda di bawah Finance */
+            height: auto;
+            flex: none;
+        }
+
+        .finance-area {
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            min-height: 350px; /* Space buat grafik */
+        }
+
+        .agenda-area {
+            width: 100%;
+            min-height: 400px; /* Space buat agenda */
+            flex: none;
+        }
+        
+        .agenda-list { overflow-y: auto; } /* Di HP bisa scroll manual agendanya */
+        .scroller-agenda { animation: none; } /* Matikan auto scroll di HP biar enak dibaca */
+
+        .ticker-bar {
+            position: fixed; bottom: 0; width: 100%; /* Ticker tetep nempel bawah */
+        }
+        
+        /* Boss Booster di HP dipindah */
+        .boss-indicator { top: 50%; right: 0; transform: translateY(-50%); position: relative; margin-left: 10px; }
+    }
 </style>
 <?php $this->endSection("style") ?>
 
