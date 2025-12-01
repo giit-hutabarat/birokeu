@@ -1,217 +1,389 @@
 <?php $this->section("style"); ?>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300;400;600;700;900&family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
+
 <style>
-    #tanggal {
-        color: white;
+    :root {
+        --bg-color: #050505;
+        --panel-bg: #111;
+        --bloomberg-orange: #ff9800; /* Warna khas breaking news */
+        --adhyaksa-gold: #FFD700;
+        --adhyaksa-green: #00AA00;
+        --alert-red: #D50000;
+        --text-white: #f5f5f5;
+        --border-color: #333;
     }
 
-    #waktu {
-        color: yellow;
+    /* --- RESET & BASE --- */
+    html, body {
+        height: 100vh; margin: 0; padding: 0;
+        background: var(--bg-color); 
+        font-family: 'Titillium Web', sans-serif; 
+        color: var(--text-white);
+        overflow: hidden; /* Default TV: No Scroll */
     }
 
-    /* text scroller */
-    #news-container-full {
-        position: absolute;
-        top: 90vh;
-        left: 0;
-        width: 100%;
-        height: 10vh;
-        background: #dc3545;
-        z-index: 2;
-        overflow: hidden;
-        /*transform: translate3d(0, 0, 0);*/
+    /* --- LAYOUT GRID UTAMA --- */
+    .bloomberg-grid {
+        display: grid;
+        grid-template-columns: 70fr 30fr; /* Kiri Video (70%), Kanan Agenda (30%) */
+        grid-template-rows: 60px auto 50px; /* Header, Content, Ticker */
+        height: 100vh;
+        width: 100vw;
     }
 
-    #temperature {
-        color: yellow !important;
+    /* 1. HEADER (TOP BAR) */
+    .top-bar {
+        grid-column: 1 / -1;
+        background: #000;
+        border-bottom: 2px solid var(--adhyaksa-gold);
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 20px;
+        z-index: 50;
+    }
+    .brand-area { display: flex; align-items: center; gap: 15px; }
+    .brand-text { line-height: 1; text-transform: uppercase; }
+    .brand-title { font-weight: 900; font-size: 1.5rem; letter-spacing: 1px; color: white; display: block; }
+    .brand-sub { font-weight: 600; color: var(--adhyaksa-gold); font-size: 0.9rem; display: block; }
+    
+    .header-info { display: flex; gap: 30px; align-items: center; }
+    .clock-widget { text-align: right; font-family: 'Roboto Condensed', sans-serif; line-height: 1; }
+    .clock-time { font-size: 2.2rem; font-weight: 700; color: white; }
+    .clock-date { font-size: 0.9rem; color: #aaa; text-transform: uppercase; }
+
+    /* BOSS BOOSTER: E-AUDIT STATUS */
+    .boss-status {
+        display: flex; align-items: center; gap: 10px;
+        padding: 5px 15px; border-radius: 4px; border: 1px solid #333;
+    }
+    .status-light { width: 12px; height: 12px; border-radius: 50%; animation: blink 1s infinite; }
+    .st-green { background: var(--adhyaksa-green); box-shadow: 0 0 10px var(--adhyaksa-green); }
+    .st-red { background: var(--alert-red); box-shadow: 0 0 10px var(--alert-red); animation-duration: 0.3s; }
+
+    /* 2. MAIN STAGE (LEFT) - VIDEO & FINANCE */
+    .main-stage {
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+        display: flex; flex-direction: column;
+        background: #000;
+        border-right: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    /* Video Wrapper */
+    .video-container {
+        flex: 1; /* Isi sisa ruang */
+        position: relative; background: #000;
+    }
+    .live-badge {
+        position: absolute; top: 20px; left: 20px;
+        background: var(--alert-red); color: white;
+        padding: 2px 8px; font-weight: 700; font-size: 0.8rem;
+        border-radius: 2px; z-index: 10;
+    }
+
+    /* Finance Dashboard (Lower Third style) */
+    .finance-overlay {
+        height: 180px; /* Fixed height for data */
+        background: #111;
+        border-top: 4px solid var(--adhyaksa-green);
+        display: flex;
+    }
+    .finance-box {
+        flex: 1; padding: 15px; border-right: 1px solid #333;
+        display: flex; flex-direction: column; justify-content: center;
+    }
+    .f-label { font-size: 0.9rem; color: #888; text-transform: uppercase; font-weight: 600; margin-bottom: 5px; }
+    .f-value { font-size: 1.8rem; font-weight: 700; color: white; font-family: 'Roboto Condensed'; }
+    .f-sub { font-size: 0.8rem; color: var(--adhyaksa-gold); }
+    
+    /* Progress Bar Kecil */
+    .mini-progress { height: 6px; background: #333; margin-top: 10px; width: 100%; }
+    .mini-fill { height: 100%; background: var(--adhyaksa-green); }
+
+    /* 3. AGENDA MODULE (RIGHT SIDEBAR) - MENONJOL */
+    .agenda-sidebar {
+        grid-column: 2 / 3;
+        grid-row: 2 / 3;
+        background: #151515;
+        display: flex; flex-direction: column;
+        border-left: 2px solid var(--adhyaksa-gold); /* Aksen Pemisah Tegas */
+    }
+
+    .agenda-header {
+        background: var(--adhyaksa-gold);
+        color: black;
+        padding: 15px;
+        text-align: center;
+        font-weight: 900;
+        font-size: 1.4rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        z-index: 10;
+    }
+
+    .agenda-list-wrapper {
+        flex: 1; overflow: hidden; position: relative;
+    }
+    .agenda-scroller {
+        animation: scrollAgenda 45s linear infinite; 
+    }
+
+    /* Agenda Item Styling - HIGH CONTRAST */
+    .agenda-card {
+        padding: 20px;
+        border-bottom: 1px solid #333;
+        background: #1a1a1a;
+        transition: background 0.3s;
+        position: relative;
+    }
+    .agenda-card:nth-child(even) { background: #151515; }
+    
+    /* Highlight for NOW */
+    .agenda-card.is-now {
+        background: #2a1c00; /* Dark Gold Tint */
+        border-left: 5px solid var(--adhyaksa-gold);
+    }
+    .status-badge {
+        display: inline-block; padding: 2px 6px; border-radius: 2px;
+        font-size: 0.7rem; font-weight: bold; text-transform: uppercase;
+        margin-bottom: 5px;
+    }
+    .badge-now { background: var(--alert-red); color: white; animation: blink 2s infinite; }
+    .badge-next { background: #0277BD; color: white; }
+
+    .ag-time { font-size: 1.6rem; font-weight: 700; color: white; font-family: 'Roboto Condensed'; display: block; line-height: 1; margin-bottom: 5px; }
+    .ag-title { font-size: 1.1rem; color: #ddd; font-weight: 600; line-height: 1.2; margin-bottom: 5px; }
+    .ag-loc { font-size: 0.85rem; color: #888; display: flex; align-items: center; gap: 5px; }
+
+    /* 4. FOOTER (TICKER & UTILITY) */
+    .footer-bar {
+        grid-column: 1 / -1;
+        grid-row: 3 / 4;
+        background: #222;
+        display: flex;
+        border-top: 1px solid #333;
+    }
+    .utility-box {
+        width: 300px; background: #333; color: white;
+        display: flex; align-items: center; padding: 0 15px; gap: 15px;
+        font-weight: bold; font-size: 0.9rem;
+        z-index: 20;
+    }
+    .ticker-wrapper {
+        flex: 1; background: var(--bg-color);
+        display: flex; align-items: center; overflow: hidden;
+        position: relative;
+    }
+    .news-scroll {
+        white-space: nowrap;
+        padding-left: 100%;
+        animation: marquee 30s linear infinite;
+        font-size: 1.2rem; font-weight: 600; text-transform: uppercase;
+    }
+    .news-item { margin-right: 50px; color: #fff; }
+    .news-hl { color: var(--bloomberg-orange); margin-right: 5px; }
+
+    /* ANIMATIONS */
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+    @keyframes scrollAgenda { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+
+    /* =========================================
+       RESPONSIVE (MOBILE & TABLET)
+       ========================================= */
+    @media screen and (max-width: 1024px) {
+        html, body { overflow-y: auto; height: auto; }
+        
+        .bloomberg-grid {
+            display: flex; flex-direction: column;
+            height: auto; width: 100%;
+        }
+
+        /* 1. HEADER MOBILE */
+        .top-bar {
+            padding: 10px 15px; flex-direction: row; justify-content: space-between;
+        }
+        .brand-text { font-size: 0.8rem; }
+        .clock-time { font-size: 1.5rem; }
+        .boss-status { display: none; } /* Hide boss booster on mobile header */
+
+        /* 2. VIDEO MOBILE */
+        .main-stage {
+            border-right: none; height: auto;
+        }
+        .video-container {
+            height: 250px; /* Fix height for video */
+        }
+        
+        /* Data Finance Mobile (Stack Horizontal scroll or Wrap) */
+        .finance-overlay {
+            height: auto; flex-wrap: wrap; border-top: 2px solid var(--adhyaksa-green);
+        }
+        .finance-box {
+            flex: 1 0 50%; /* 2 kolom per baris */
+            padding: 10px; border-bottom: 1px solid #333;
+        }
+        .f-value { font-size: 1.4rem; }
+
+        /* 3. AGENDA MOBILE (Tetap Menonjol tapi Scrollable) */
+        .agenda-sidebar {
+            border-left: none; border-top: 4px solid var(--adhyaksa-gold);
+            height: 400px; /* Fix height scrollable */
+        }
+        .agenda-scroller { animation: none; } /* Matikan auto scroll */
+        .agenda-list-wrapper { overflow-y: auto; }
+        .ag-time { font-size: 1.4rem; }
+
+        /* 4. FOOTER MOBILE */
+        .footer-bar { position: fixed; bottom: 0; width: 100%; z-index: 100; height: 40px; }
+        .utility-box { display: none; } /* Hide utility, show ticker only */
+        .news-scroll { font-size: 1rem; animation-duration: 20s; }
+        
+        /* Padding bottom biar konten gak ketutup footer */
+        .agenda-sidebar { margin-bottom: 40px; }
     }
 </style>
 <?php $this->endSection("style") ?>
 
-<nav class="navbar navbar-dark bg-dark transparan mb-4">
-    <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center my-2 my-lg-0 me-lg-auto text-decoration-none" href="#">
-            <img style="margin:0 auto;margin-right: 10px;" id="logo" class="img-responsive" src="<?php echo base_url('/' . ($logo == "" ? 'logo.png' : $logo)); ?>" width="80" height="80" />
-            <span id="judul_1" class="h1 fw-bold"><?= $nama_instansi; ?><br />
-                <span id="judul_2" class="h5"><?= $alamat; ?></span>
-            </span>
-        </a>
-
-        <!--tanggal dan jam-->
-        <div class="text-center fw-bold">
-            <p id="tanggal">{{tanggal}}</p>
-            <p id="waktu">{{jam}}</p>
-        </div>
-
-    </div>
-</nav>
-
-<div class="container-fluid">
-
-    <div class="row">
-        <div class="col-sm-8">
-            <div class="card bg-dark text-white transparan border-0">
-                <div class="card-header h5">
-                    <i class="mdi mdi-video"></i> Video
-                </div>
-                <?php if ($video_youtube == 'no') { ?>
-					<!-- mp4 -->
-					<video id="myplayer" class="ratio ratio-16x9" controls <?= $video_muted; ?>>
-
-					</video>
-				<?php } else { ?>
-					<!-- youtube -->
-					<vue-plyr>
-						<div class="plyr__video-embed" id="player">
-							<iframe src="https://www.youtube.com/embed/<?= $videoId; ?>?origin=<?= base_url(); ?>&amp;autoplay=1&amp;loop=1&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
-						</div>
-					</vue-plyr>
-				<?php } ?>
+<div class="bloomberg-grid">
+    
+    <header class="top-bar">
+        <div class="brand-area">
+            <img src="<?php echo base_url('/' . ($logo == "" ? 'logo.png' : $logo)); ?>" width="50" />
+            <div class="brand-text">
+                <span class="brand-title">BIRO KEUANGAN</span>
+                <span class="brand-sub">LIVE MONITORING CENTER</span>
             </div>
         </div>
 
-        <div class="col-sm-4">
-            <div class="card bg-dark text-white transparan border-0 mb-3">
-                <div class="card-header h5">
-                    <i class="mdi mdi-weather-cloudy"></i> Prakiraan Cuaca
-                </div>
-                <div class="card-body">
-                    <h5 class="mb-0">{{ dataCuaca.name }}, {{ dataCuaca_sys.country }}</h5>
-
-                    <div v-for="item in dataCuaca.weather" :key="item.id">
-                    <h5 class="mb-0 fw-normal"> <img :src="'http://openweathermap.org/img/wn/' + item.icon + '.png'"> {{ item.main }}, {{ item.description }}</h5>
-                    </div>
-                    
-                    <p class="mb-0 h1" id="temperature"><strong>{{ Math.ceil(dataCuaca_main.temp_max) }}</strong>&deg;<span>C</span></p>
-
-                    <p>Feels like {{ Math.ceil(dataCuaca_main.feels_like) }}&deg;<span>C</span>. Humidity {{ dataCuaca_main.humidity }}%</p>
-
-                    <small class="text-muted">Data API openweathermap.org</small>
-                </div>
+        <div class="header-info">
+            <div class="boss-status" :title="bossMessage">
+                <span class="status-light" :class="bossColor"></span>
+                <span style="font-weight: bold; font-size: 0.9rem; color: #fff;">SYSTEM STATUS</span>
             </div>
-            <div class="card bg-warning text-dark border-0 mb-3">
-                <div class="card-header h5">
-                    <i class="mdi mdi-calendar"></i> Agenda
+            
+            <div class="clock-widget">
+                <div class="clock-time">{{ jam }}</div>
+                <div class="clock-date">{{ tanggal }}</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-stage">
+        <div class="video-container">
+            <div class="live-badge">LIVE BROADCAST</div>
+            <?php 
+                $finalVideoId = $videoId;
+                if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $videoId, $match)) { $finalVideoId = $match[1]; }
+                $finalVideoId = trim($finalVideoId);
+                if (empty($finalVideoId)) { $finalVideoId = 'r3wW21ddf9U'; } 
+            ?>
+            <?php if ($video_youtube == 'no') : ?>
+                <video id="myplayer" autoplay muted loop style="width:100%; height:100%; object-fit:cover;"></video>
+            <?php else : ?>
+                <iframe width="100%" height="100%" src="https://www.youtube.com/embed/<?= $finalVideoId; ?>?autoplay=1&mute=1&loop=1&playlist=<?= $finalVideoId; ?>&controls=0&showinfo=0" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+            <?php endif; ?>
+        </div>
+
+        <div class="finance-overlay">
+            <div class="finance-box">
+                <span class="f-label">Realisasi Anggaran</span>
+                <span class="f-value">{{ finance.persen }}%</span>
+                <span class="f-sub">{{ formatRupiah(finance.realisasi) }}</span>
+                <div class="mini-progress"><div class="mini-fill" :style="{ width: finance.persen + '%' }"></div></div>
+            </div>
+            <div class="finance-box">
+                <span class="f-label">Sisa Anggaran</span>
+                <span class="f-value" style="color: var(--bloomberg-orange);">{{ formatRupiah(finance.sisa) }}</span>
+                <span class="f-sub">Target Bulan: {{ finance.target }}%</span>
+            </div>
+            <div class="finance-box">
+                <span class="f-label">PNBP (Penerimaan)</span>
+                <span class="f-value" style="color: var(--adhyaksa-gold);">{{ formatRupiah(pnbp.total) }}</span>
+                <span class="f-sub"><i class="mdi mdi-arrow-up"></i> +12% YoY</span>
+            </div>
+            <div class="finance-box" style="border-right: none;">
+                <span class="f-label">Cuaca Terkini</span>
+                <div class="d-flex align-items-center gap-2">
+                    <i class="wi wi-day-cloudy" style="font-size: 1.8rem; color: #aaa;"></i>
+                    <span class="f-value">29°C</span>
                 </div>
-                <div class="card-body bg-white text-dark">
-                    <ul class="list-unstyled">
-                        <li v-for="item in dataAgenda" :key="item.id">
-                            <h6 class="fw-bold">{{ item.nama_agenda }}, {{ item.tgl_agenda }}</h6>
-                            {{ item.tempat_agenda }}, {{ item.waktu }} - Selesai
-                            <hr />
-                        </li>
-                    </ul>
+                <span class="f-sub">Jakarta Selatan</span>
+            </div>
+        </div>
+    </main>
+
+    <aside class="agenda-sidebar">
+        <div class="agenda-header">
+            <i class="mdi mdi-calendar-clock"></i> AGENDA BIRO
+        </div>
+        
+        <div class="agenda-list-wrapper">
+            <div v-if="dataAgenda.length === 0" class="p-4 text-center text-muted">
+                TIDAK ADA JADWAL HARI INI
+            </div>
+            <div v-else class="agenda-scroller">
+                <div v-for="(item, i) in dataAgenda" :key="i" class="agenda-card" :class="{ 'is-now': isEventNow(item.waktu) }">
+                    <div v-if="isEventNow(item.waktu)" class="status-badge badge-now">SEDANG BERLANGSUNG</div>
+                    <div v-else class="status-badge badge-next">AKAN DATANG</div>
+
+                    <span class="ag-time">{{ item.waktu.substring(0,5) }} WIB</span>
+                    <div class="ag-title">{{ item.nama_agenda }}</div>
+                    <div class="ag-loc"><i class="mdi mdi-map-marker"></i> {{ item.tempat_agenda }}</div>
+                </div>
+
+                <div v-for="(item, i) in dataAgenda" :key="'d-'+i" class="agenda-card">
+                    <div class="status-badge badge-next">AKAN DATANG</div>
+                    <span class="ag-time">{{ item.waktu.substring(0,5) }} WIB</span>
+                    <div class="ag-title">{{ item.nama_agenda }}</div>
+                    <div class="ag-loc"><i class="mdi mdi-map-marker"></i> {{ item.tempat_agenda }}</div>
                 </div>
             </div>
         </div>
-    </div>
+    </aside>
 
-    <div class="mt-3">
-        <div class="card card-body bg-dark text-white transparan py-0">
-            <span><i class="fa fa-info-circle"></i> Waktu sholat:
-                <?php if ($jadwal_sholat == 'excel') { ?>
-                    Import Excel
-                <?php } else { ?>
-                    API api.myquran.com
-                <?php } ?>
-            </span>
+    <footer class="footer-bar">
+        <div class="utility-box">
+            <i class="mdi mdi-mosque"></i> {{ nextPrayer.name }} : {{ nextPrayer.time }}
         </div>
-        <div class="row g-0">
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <div class="card transparan border-0">
-                    <div class="card-body bg-blue-grey text-center">
-                        <h2 class="nama-solat">Imsak</h2>
-                        <span class="waktu-solat" id="imsak">{{ dataJadwalsholat.imsak }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <div class="card transparan border-0">
-                    <div class="card-body bg-red text-center">
-                        <h2 class="nama-solat">Subuh</h2>
-                        <span class="waktu-solat" id="subuh">{{ dataJadwalsholat.subuh }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <div class="card transparan border-0">
-                    <div class="card-body bg-cyan text-center">
-                        <h2 class="nama-solat">Dzuhur</h2>
-                        <span class="waktu-solat" id="dzuhur">{{ dataJadwalsholat.dzuhur }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <div class="card transparan border-0">
-                    <div class="card-body bg-green text-center">
-                        <h2 class="nama-solat">Ashar</h2>
-                        <span class="waktu-solat" id="ashar">{{ dataJadwalsholat.ashar }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <div class="card transparan border-0">
-                    <div class="card-body bg-orange text-center">
-                        <h2 class="nama-solat">Maghrib</h2>
-                        <span class="waktu-solat" id="maghrib">{{ dataJadwalsholat.maghrib }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
-                <div class="card transparan border-0">
-                    <div class="card-body bg-pink text-center">
-                        <h2 class="nama-solat">Isya</h2>
-                        <span class="waktu-solat" id="isya">{{ dataJadwalsholat.isya }}</span>
-                    </div>
-                </div>
+        <div class="ticker-wrapper">
+            <div class="news-scroll">
+                <span v-for="item in dataNews" :key="item.id" class="news-item">
+                    <span class="news-hl">NEWS UPDATE:</span> {{ item.text_news }}
+                </span>
+                <span v-for="item in dataNews" :key="'d-'+item.id" class="news-item">
+                     <span class="news-hl">NEWS UPDATE:</span> {{ item.text_news }}
+                </span>
             </div>
         </div>
-    </div>
+    </footer>
 </div>
-
-<!--teks berjalan-->
-<div id="news-container-full">
-    <div class="position-absolute top-50 start-50 translate-middle w-100">
-        <ul class="marquee news-text">
-            <li v-for="item in dataNews" :key="item.id" style="display: inline;">
-                {{ item.text_news }} &bull;
-            </li>
-        </ul>
-    </div>
-</div>
-
-<?php $this->section("modal") ?>
-
-<?php $this->endSection("modal") ?>
 
 <?php $this->section("js") ?>
 <script>
-    //var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
-    function addZeroBefore(n) {
-        return (n < 10 ? '0' : '') + n;
-    }
+    function addZero(n) { return (n < 10 ? '0' : '') + n; }
 
     dataVue = {
         ...dataVue,
-        tanggal: "",
-        jam: "",
-        dataNews: [],
-        dataAgenda: [],
-        dataVideo: [],
-        dataJadwalsholat: [],
-        dataCuaca: [],
-        dataCuaca_weather: [],
-        dataCuaca_main: [],
-        dataCuaca_sys: [],
+        jam: "", tanggal: "",
+        
+        // Data & Logic
+        dataNews: [], dataAgenda: [],
+        finance: { pagu: 15000000000, realisasi: 9800000000, sisa: 5200000000, persen: 65.3, target: 70 },
+        pnbp: { total: 1600000000 },
+        nextPrayer: { name: 'Ashar', time: '15:15' },
+        
+        // Boss Booster
+        bossColor: 'st-green', // st-green, st-red
+        bossMessage: 'System Normal'
     }
 
     createdVue = function() {
-        setInterval(this.getDate, 1000);
-        setInterval(this.getTime, 1000);
-        this.getVideo();
-        this.getNews();
-        this.getAgenda();
-        this.getJadwalsholat();
-        this.getCuaca();
+        setInterval(this.updateTime, 1000);
+        this.getNews(); this.getAgenda();
+        this.checkStatus();
     }
 
     mountedVue = function() {
@@ -221,191 +393,47 @@
 
     methodsVue = {
         ...methodsVue,
-        getDate: function() {
-            const weekday = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-			const today = new Date();
-			const date = addZeroBefore(today.getDate()) + '-' + (addZeroBefore(today.getMonth() + 1)) + '-' + today.getFullYear();
-			let Hari = weekday[today.getDay()];
-			const Tanggal = date;
-			this.tanggal = Hari + ', ' + Tanggal;
+        
+        formatRupiah: function(num) {
+            // Format angka pendek (1.5 M, 120 Jt) biar muat di kotak
+            if(num >= 1000000000) return (num/1000000000).toFixed(1) + ' M';
+            if(num >= 1000000) return (num/1000000).toFixed(0) + ' Jt';
+            return new Intl.NumberFormat('id-ID').format(num);
         },
 
-        getTime: function() {
-            const today = new Date();
-            const time = addZeroBefore(today.getHours()) + ":" + addZeroBefore(today.getMinutes()) + ":" + addZeroBefore(today.getSeconds());
-            const Jam = time;
-            this.jam = Jam;
+        updateTime: function() {
+            const d = new Date();
+            this.jam = `${addZero(d.getHours())}:${addZero(d.getMinutes())}:${addZero(d.getSeconds())}`;
+            const m = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Ags", "Sep", "Okt", "Nov", "Des"];
+            this.tanggal = `${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
         },
 
-        // Get News
-        getNews: function() {
-            this.loading = true;
-            axios.get('<?= base_url() ?>/api/news/news')
-                .then(res => {
-                    // handle success
-                    this.loading = false;
-                    var data = res.data;
-                    if (data.status == true) {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                        this.dataNews = data.data;
-                        //myModal.show();
-                    } else {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                    }
-                })
-                .catch(err => {
-                    // handle error
-                    console.log(err);
-                })
+        // Logic Highlight Agenda "NOW"
+        isEventNow: function(waktuStr) {
+            // Simulasi logic sederhana: 
+            // Kalau jam agenda == jam sekarang, return true. 
+            // Di real app, bandingkan Date object
+            const currentH = new Date().getHours();
+            const agendaH = parseInt(waktuStr.substring(0,2));
+            return currentH === agendaH; 
         },
 
-        // Get Video
-        getVideo: function() {
-            this.loading = true;
-            axios.get('<?= base_url(); ?>/api/display/video')
-                .then(res => {
-                    // handle success
-                    this.loading = false;
-                    var data = res.data;
-                    if (data.status == true) {
-                        //this.snackbar = true;
-                        //this.snackbarMessage = data.message;
-                        this.dataVideo = data.data;
-                        <?php if ($video_youtube == 'no') : ?>
-							this.playVideo();
-						<?php endif; ?>
-                    } else {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                    }
-                })
-                .catch(err => {
-                    // handle error
-                    console.log(err);
-                    var error = err.response
-                    if (error.data.expired == true) {
-                        this.snackbar = true;
-                        this.snackbarMessage = error.data.message;
-                        setTimeout(() => window.location.href = error.data.data.url, 1000);
-                    }
-                })
-        },
-
-        //Play Video MP4
-        playVideo: function() {
-			//Video Player
-			var player = document.getElementById("myplayer");
-		
-			var i = 0;
-			var videoSource = this.dataVideo;
-			var videoCount = videoSource.length;
-			player.setAttribute("src", videoSource[0]);
-			player.autoplay = true;
-        	player.load();
-
-			function videoPlay(videoNum) {
-				player.setAttribute("src", videoSource[videoNum]);
-				player.load();
-				player.play();
-			}
-
-			player.addEventListener('ended', myHandler, false);
-
-			function myHandler() {
-				if (i == (videoCount - 1)) {
-					i = 0;
-					axios.get('<?= base_url(); ?>/api/display/video')
-						.then(res => {
-							if (data.status == true) {
-								this.dataVideo = data.data;
-								videoSource = this.dataVideo;
-								videoCount = videoSource.length;
-							}
-						});
-					videoPlay(i);
-				} else {
-					i++;
-					videoPlay(i);
-				}
-			}
-		},
-
-        //Get Agenda
-        getAgenda: function() {
-            this.loading = true;
-            axios.get('<?= base_url() ?>/api/display/agenda')
-                .then(res => {
-                    // handle success
-                    this.loading = false;
-                    var data = res.data;
-                    if (data.status == true) {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                        this.dataAgenda = data.data;
-                    } else {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                    }
-                })
-                .catch(err => {
-                    // handle error
-                    console.log(err);
-                })
-        },
-
-        // Get Jadwal Sholat
-        getJadwalsholat: function() {
-            this.loading = true;
-            axios.get('<?= base_url() ?>/api/display/jadwalsholat')
-                .then(res => {
-                    // handle success
-                    this.loading = false;
-                    var data = res.data;
-                    if (data.status == true) {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                        this.dataJadwalsholat = data.data;
-                        console.log(this.dataJadwalsholat);
-                        //myModal.show();
-                    } else {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                    }
-                })
-                .catch(err => {
-                    // handle error
-                    console.log(err);
-                })
-        },
-
-        // Get Cuaca
-        getCuaca: function() {
-            this.loading = true;
-            axios.get('<?= base_url() ?>/api/display/cuaca')
-                .then(res => {
-                    // handle success
-                    this.loading = false;
-                    var data = res.data;
-                    if (data.status == true) {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                        this.dataCuaca = data.data;
-                        this.dataCuaca_weather = this.dataCuaca.weather;
-                        this.dataCuaca_main = this.dataCuaca.main;
-                        this.dataCuaca_sys = this.dataCuaca.sys;
-                        console.log(this.dataCuaca);
-                    } else {
-                        this.snackbar = true;
-                        this.snackbarMessage = data.message;
-                    }
-                })
-                .catch(err => {
-                    // handle error
-                    console.log(err);
-                })
-        },
+        // API
+        getNews: function() { axios.get('<?= base_url() ?>/api/news/news').then(res => { if(res.data.status) this.dataNews = res.data.data; }).catch(e=>{}); },
+        getAgenda: function() { axios.get('<?= base_url() ?>/api/display/agenda').then(res => { if(res.data.status) this.dataAgenda = res.data.data; }).catch(e=>{}); },
+        
+        // Boss Booster Logic
+        checkStatus: function() {
+            // Jika realisasi < target lebih dari 5%, Merah
+            const gap = this.finance.target - this.finance.persen;
+            if (gap > 5) {
+                this.bossColor = 'st-red';
+                this.bossMessage = 'ALERT: Realisasi di bawah Target!';
+            } else {
+                this.bossColor = 'st-green';
+                this.bossMessage = 'System Normal';
+            }
+        }
     }
 </script>
 <?php $this->endSection("js") ?>
