@@ -9,3 +9,4 @@
 /writable/cache/
 /public/uploads/
 /writable/*.json
+/app/Config/Database.php
