@@ -16,7 +16,7 @@ class DataSheet extends BaseController
             $client->addScope(Sheets::SPREADSHEETS_READONLY);
             $service = new Sheets($client);
 
-            $spreadsheetId = '1Jlsbx5HxKzQDmfNFIBkw1TTmDBKXpIxKAtb_zhaLLfo'; // ⚠️ GANTI INI
+            $spreadsheetId = ''; // ⚠️ GANTI INI
             $range = 'SIDANG HARI INI!A1:G100'; // ⚠️ GANTI INI (NamaTab!Range)
 
             $response = $service->spreadsheets_values->get($spreadsheetId, $range);
