@@ -235,7 +235,7 @@
                 <h3 class="fw-bold m-0 text-uppercase">Biro Keuangan</h3>
                 <span class="text-gold" style="letter-spacing: 3px;">KEJAKSAAN AGUNG R.I.</span>
             </div>
-            <img src="<?= base_url('/' . ($logo == "" ? 'logo.png' : 'assets/img/logo_kejaksaan.png')); ?>" width="80">
+            <img src="<?= base_url('/' . ($logo == "" ? 'logo.png' : 'images/logo_kejaksaan.png')); ?>" width="80">
         </div>
 
         <transition name="fade" mode="out-in">
