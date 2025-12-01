@@ -1,293 +1,394 @@
 <?php $this->section("style"); ?>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
 <style>
     :root {
-        --adhyaksa-dark: #051e11; /* Hijau Hitam */
-        --adhyaksa-green: #0e4d2a; /* Hijau Kejaksaan */
-        --adhyaksa-gold: #fbbf24;  /* Emas Terang */
-        --text-light: #f3f4f6;
+        --bg-dark: #050505;
+        --sidebar-bg: rgba(11, 61, 32, 0.85); /* Hijau Adhyaksa Glass */
+        --gold-primary: #FFD700;
+        --text-white: #ffffff;
+        --glass-border: 1px solid rgba(255,255,255,0.1);
     }
 
     body {
-        background: radial-gradient(circle at center, var(--adhyaksa-green) 0%, var(--adhyaksa-dark) 100%);
-        color: var(--text-light);
-        overflow: hidden; /* Hilangkan scrollbar untuk TV Display */
-        font-family: 'Segoe UI', sans-serif;
-    }
-
-    /* Navbar/Header Transparent */
-    .navbar-glass {
-        background: rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(10px);
-        border-bottom: 2px solid var(--adhyaksa-gold);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .instansi-title { font-size: 1.8rem; letter-spacing: 2px; text-transform: uppercase; color: #fff; }
-    .instansi-subtitle { color: var(--adhyaksa-gold); font-size: 1.1rem; }
-
-    /* Main Content Area */
-    .main-display {
-        height: 75vh; /* Sisa tinggi layar untuk konten */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* Transition Fade Vue */
-    .fade-enter-active, .fade-leave-active { transition: opacity 1s ease; }
-    .fade-enter-from, .fade-leave-to { opacity: 0; }
-
-    /* Custom Progress Bar for Budget */
-    .progress-glass {
-        height: 35px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .progress-bar-glow {
-        background: linear-gradient(90deg, var(--adhyaksa-gold), #f59e0b);
-        box-shadow: 0 0 15px var(--adhyaksa-gold);
-    }
-
-    /* Footer Ticker */
-    .footer-ticker {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
+        font-family: 'Outfit', sans-serif;
         background: #000;
-        border-top: 3px solid var(--adhyaksa-gold);
-        height: 60px;
-        display: flex;
-        align-items: center;
-        z-index: 100;
+        color: white;
+        overflow: hidden;
+        margin: 0;
+    }
+
+    /* BACKGROUND LAYER */
+    .bg-layer {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background: radial-gradient(circle at 70% 50%, #1a1a1a 0%, #000 100%);
     }
     
-    .kurs-box {
-        background: var(--adhyaksa-gold);
-        color: #000;
-        font-weight: bold;
-        padding: 0 20px;
+    /* Bisa diganti video background di sini */
+    #bg-video {
+        position: fixed;
+        right: 0; bottom: 0;
+        min-width: 100%; min-height: 100%;
+        z-index: -2;
+        object-fit: cover;
+        opacity: 0.4;
+    }
+
+    /* === LAYOUT SPLIT SCREEN === */
+    .screen-wrapper {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+    }
+
+    /* 1. SMART SIDEBAR (LEFT) */
+    .sidebar {
+        width: 380px; /* Fixed width */
         height: 100%;
+        background: var(--sidebar-bg);
+        backdrop-filter: blur(20px);
+        border-right: 4px solid var(--gold-primary);
+        display: flex;
+        flex-direction: column;
+        padding: 2.5rem 2rem;
+        position: relative;
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        z-index: 10;
+    }
+
+    /* Header Clock */
+    .sidebar-header { margin-bottom: 3rem; }
+    .clock-big { font-size: 4.5rem; font-weight: 800; line-height: 0.9; letter-spacing: -2px; }
+    .date-text { font-size: 1.1rem; color: var(--gold-primary); margin-top: 10px; font-weight: 600; text-transform: uppercase; }
+
+    /* Weather Widget */
+    .weather-box {
+        background: rgba(0,0,0,0.2);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
         display: flex;
         align-items: center;
-        font-size: 1.2rem;
+        justify-content: space-between;
+        border: var(--glass-border);
     }
+    .temp-big { font-size: 2.5rem; font-weight: 700; }
+
+    /* Prayer Times List */
+    .prayer-list {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .prayer-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 15px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        font-size: 1.1rem;
+    }
+    .prayer-item.active {
+        background: var(--gold-primary);
+        color: #000;
+        font-weight: 800;
+        border-radius: 8px;
+        border: none;
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    /* QR Guestbook (Bottom) */
+    .qr-section {
+        margin-top: auto;
+        text-align: center;
+        background: white;
+        padding: 15px;
+        border-radius: 15px;
+        color: black;
+    }
+    .qr-label { font-size: 0.9rem; font-weight: 700; margin-bottom: 5px; text-transform: uppercase; }
+
+    /* BOSS BOOSTER: PULSE INDICATOR */
+    .boss-pulse {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #00ff00; /* Default Green */
+        box-shadow: 0 0 0 rgba(0, 255, 0, 0.4);
+        animation: pulse 2s infinite;
+    }
+    .boss-pulse.alert {
+        background: #ff0000;
+        box-shadow: 0 0 0 rgba(255, 0, 0, 0.4);
+        animation: pulse-alert 1s infinite;
+    }
+
+    /* 2. MAIN CONTENT (RIGHT) */
+    .main-stage {
+        flex: 1;
+        padding: 3rem 4rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+    }
+
+    /* Content Styling */
+    .instansi-header {
+        position: absolute;
+        top: 30px; right: 40px;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .big-card {
+        background: rgba(255,255,255,0.03);
+        border: var(--glass-border);
+        border-radius: 30px;
+        padding: 3rem;
+        height: 80%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+    }
+
+    .stat-row { display: flex; gap: 30px; margin-top: 3rem; }
+    .stat-item {
+        flex: 1;
+        background: rgba(0,0,0,0.3);
+        padding: 2rem;
+        border-radius: 20px;
+        border-left: 5px solid var(--gold-primary);
+    }
+
+    /* Animasi */
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7); }
+        70% { box-shadow: 0 0 0 15px rgba(0, 255, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(0, 255, 0, 0); }
+    }
+    @keyframes pulse-alert {
+        0% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.7); }
+        70% { box-shadow: 0 0 0 20px rgba(255, 0, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0); }
+    }
+    
+    .fade-enter-active, .fade-leave-active { transition: opacity 0.8s ease; }
+    .fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
 <?php $this->endSection("style") ?>
 
-<nav class="navbar navbar-glass p-3 mb-4">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <img class="img-fluid me-4" style="filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));" src="<?php echo base_url('/' . ($logo == "" ? 'logo.png' : $logo)); ?>" width="90" />
-            <div class="d-flex flex-column">
-                <span class="fw-bold instansi-title">Biro Keuangan</span>
-                <span class="instansi-subtitle">Kejaksaan Republik Indonesia</span>
+<div class="bg-layer"></div>
+<div class="screen-wrapper">
+    
+    <aside class="sidebar">
+        <div class="boss-pulse" :class="{ 'alert': !isPerformanceSafe }" title="Status Kinerja Biro"></div>
+
+        <div class="sidebar-header">
+            <div class="clock-big">{{ jam }}</div>
+            <div class="date-text">{{ tanggal }}</div>
+            <div class="mt-2 text-muted"><i class="mdi mdi-map-marker"></i> Jakarta Selatan</div>
+        </div>
+
+        <div class="weather-box">
+            <div>
+                <i class="mdi mdi-weather-partly-cloudy text-warning display-4"></i>
+                <div class="small text-muted">Cuaca Saat Ini</div>
+            </div>
+            <div class="text-end">
+                <div class="temp-big">29°C</div>
+                <div class="text-white-50">Berawan</div>
             </div>
         </div>
-        <div class="text-end">
-            <div class="display-5 fw-bold text-white" style="text-shadow: 0 0 10px rgba(0,0,0,0.5);">{{ jam }}</div>
-            <div class="h4 text-warning m-0">{{ tanggal }}</div>
-        </div>
-    </div>
-</nav>
 
-<div class="container-fluid px-5">
-    <div class="main-display position-relative">
+        <h6 class="text-muted text-uppercase mb-3 ps-2" style="font-size: 0.8rem; letter-spacing: 2px;">Jadwal Sholat</h6>
+        <div class="prayer-list">
+            <div v-for="(time, name) in jadwalSholat" :key="name" 
+                 class="prayer-item" 
+                 :class="{ 'active': name === nextSholat }">
+                <span>{{ name }}</span>
+                <span>{{ time }}</span>
+            </div>
+        </div>
+
+        <div class="qr-section">
+            <div class="qr-label">Buku Tamu Digital</div>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://kejaksaan.go.id/tamu" 
+                 alt="Scan QR" class="img-fluid" style="width: 120px; height: 120px;">
+            <div style="font-size: 0.7rem; margin-top: 5px; color: #333;">Scan untuk mengisi kehadiran</div>
+        </div>
+    </aside>
+
+    <main class="main-stage">
         
-        <transition name="fade">
-            <div v-if="activeSlide === 0" class="w-100 position-absolute">
-                <h1 class="display-4 fw-bold text-center mb-5 text-warning border-bottom border-warning d-inline-block pb-2 mx-auto">
-                    <i class="mdi mdi-chart-pie"></i> REALISASI ANGGARAN TAHUN BERJALAN
-                </h1>
-                
-                <div class="row align-items-center mt-4">
-                    <div class="col-md-5 text-end border-end border-secondary pe-5">
-                        <div class="mb-5">
-                            <h4 class="text-secondary text-uppercase">Total Pagu</h4>
-                            <h1 class="display-3 fw-bold text-white">{{ formatRupiah(publicFinance.pagu) }}</h1>
-                        </div>
-                        <div>
-                            <h4 class="text-secondary text-uppercase">Total Realisasi</h4>
-                            <h1 class="display-3 fw-bold text-success">{{ formatRupiah(publicFinance.realisasi) }}</h1>
-                        </div>
+        <div class="instansi-header">
+            <div>
+                <h3 class="fw-bold m-0 text-uppercase">Biro Keuangan</h3>
+                <span class="text-gold" style="letter-spacing: 3px;">KEJAKSAAN AGUNG R.I.</span>
+            </div>
+            <img src="<?= base_url('/' . ($logo == "" ? 'logo.png' : 'assets/img/logo_kejaksaan.png')); ?>" width="80">
+        </div>
+
+        <transition name="fade" mode="out-in">
+            
+            <div v-if="activeSlide === 0" key="finance" class="big-card">
+                <div class="mb-4">
+                    <span class="badge bg-warning text-dark mb-2">MONITORING DIPA</span>
+                    <h1 class="display-3 fw-bold">Realisasi Anggaran</h1>
+                    <p class="h4 text-muted">Update Real-time per {{ tanggal }}</p>
+                </div>
+
+                <div class="py-4">
+                    <div class="d-flex justify-content-between mb-2 h4">
+                        <span>Progress Penyerapan</span>
+                        <span :class="isPerformanceSafe ? 'text-success' : 'text-danger'">{{ finance.persen }}%</span>
                     </div>
-                    
-                    <div class="col-md-7 ps-5">
-                        <h2 class="mb-3">Persentase Penyerapan: <span class="text-warning display-4 fw-bold">{{ publicFinance.persen }}%</span></h2>
-                        <div class="progress progress-glass mb-3" style="height: 60px;">
-                            <div class="progress-bar progress-bar-glow progress-bar-striped progress-bar-animated" role="progressbar" 
-                                 :style="{ width: publicFinance.persen + '%' }"></div>
-                        </div>
-                        <p class="h4 text-muted mt-3">Target Bulan Ini: {{ publicFinance.target_bulan }}%</p>
+                    <div class="progress" style="height: 40px; background: rgba(255,255,255,0.1); border-radius: 20px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             :class="isPerformanceSafe ? 'bg-success' : 'bg-danger'"
+                             role="progressbar" :style="{ width: finance.persen + '%' }"></div>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat-item">
+                        <div class="text-muted text-uppercase small mb-2">Total Pagu</div>
+                        <div class="h2 fw-bold">{{ formatRupiah(finance.pagu) }}</div>
+                    </div>
+                    <div class="stat-item" style="border-left-color: #0f0;">
+                        <div class="text-muted text-uppercase small mb-2">Realisasi</div>
+                        <div class="h2 fw-bold text-success">{{ formatRupiah(finance.realisasi) }}</div>
+                    </div>
+                    <div class="stat-item" style="border-left-color: #f00;">
+                        <div class="text-muted text-uppercase small mb-2">Sisa Anggaran</div>
+                        <div class="h2 fw-bold">{{ formatRupiah(finance.sisa) }}</div>
                     </div>
                 </div>
             </div>
-        </transition>
 
-        <transition name="fade">
-            <div v-if="activeSlide === 1" class="w-100 position-absolute">
-                <h1 class="display-4 fw-bold text-center mb-5 text-white border-bottom border-white d-inline-block pb-2 mx-auto">
-                    <i class="mdi mdi-cash-register"></i> PENERIMAAN NEGARA BUKAN PAJAK (PNBP)
-                </h1>
-                
-                <div class="row g-4 justify-content-center">
-                    <div class="col-md-4" v-for="(item, i) in pnbpData" :key="i">
-                        <div class="card bg-transparent border border-warning h-100 text-center p-4" 
-                             style="box-shadow: 0 0 20px rgba(251, 191, 36, 0.1);">
-                            <div class="card-body">
-                                <div class="display-1 text-warning mb-3">
-                                    <i :class="item.icon"></i>
+            <div v-else-if="activeSlide === 1" key="agenda" class="big-card">
+                <div class="mb-5 border-bottom border-secondary pb-3">
+                    <h1 class="display-3 fw-bold"><i class="mdi mdi-calendar-check text-gold"></i> Agenda Hari Ini</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="d-flex flex-column gap-4">
+                             <div v-for="(item, i) in dataAgenda" :key="i" class="d-flex align-items-center">
+                                <div class="text-center me-4">
+                                    <div class="h3 fw-bold text-gold m-0">{{ item.waktu.substring(0,5) }}</div>
+                                    <small class="text-muted">WIB</small>
                                 </div>
-                                <h3 class="text-white text-uppercase mb-3">{{ item.jenis }}</h3>
-                                <h2 class="fw-bold text-success">{{ formatRupiah(item.nilai) }}</h2>
+                                <div class="flex-grow-1 p-3 rounded" style="background: rgba(255,255,255,0.05);">
+                                    <h4 class="fw-bold m-0">{{ item.nama_agenda }}</h4>
+                                    <div class="text-white-50 mt-1"><i class="mdi mdi-map-marker"></i> {{ item.tempat_agenda }}</div>
+                                </div>
+                            </div>
+                            <div v-if="dataAgenda.length === 0" class="alert alert-secondary">
+                                Tidak ada agenda terjadwal untuk hari ini.
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </transition>
-
-        <transition name="fade">
-            <div v-if="activeSlide === 2" class="w-100 position-absolute">
-                <h1 class="display-4 fw-bold text-center mb-5 text-info border-bottom border-info d-inline-block pb-2 mx-auto">
-                    <i class="mdi mdi-calendar-clock"></i> AGENDA KEGIATAN HARI INI
-                </h1>
-                
-                <div class="row justify-content-center">
-                    <div class="col-md-10">
-                        <div class="list-group">
-                            <div v-for="(item, i) in dataAgenda" :key="i" 
-                                 class="list-group-item bg-dark border-secondary text-white d-flex align-items-center p-4 mb-2 rounded">
-                                <div class="bg-primary text-white rounded p-3 text-center me-4" style="min-width: 100px;">
-                                    <h3 class="m-0 fw-bold">{{ item.waktu.substring(0,5) }}</h3>
-                                    <small>WIB</small>
-                                </div>
-                                <div>
-                                    <h2 class="fw-bold m-0 text-warning">{{ item.nama_agenda }}</h2>
-                                    <p class="h4 m-0 text-muted mt-1"><i class="mdi mdi-map-marker"></i> {{ item.tempat_agenda }}</p>
-                                </div>
-                            </div>
-                            <div v-if="dataAgenda.length === 0" class="text-center py-5">
-                                <h2 class="text-muted fst-italic">Tidak ada agenda publik hari ini.</h2>
-                            </div>
-                        </div>
+                    <div class="col-md-5 text-center d-flex flex-column justify-content-center border-start border-secondary">
+                        <i class="mdi mdi-format-quote-open display-1 text-muted opacity-25"></i>
+                        <h3 class="fst-italic fw-light">"Transparansi dan Akuntabilitas adalah kunci kepercayaan publik."</h3>
+                        <div class="mt-4 fw-bold text-gold">- Jaksa Agung RI</div>
                     </div>
                 </div>
             </div>
+
         </transition>
-
-    </div>
-</div>
-
-<div class="footer-ticker">
-    <div class="kurs-box">
-        <span class="me-3"><i class="mdi mdi-currency-usd"></i> KURS BI:</span>
-        <span class="me-3">USD: {{ kurs.usd }}</span>
-        <span>EUR: {{ kurs.eur }}</span>
-    </div>
-    <div class="flex-grow-1 overflow-hidden position-relative h-100 d-flex align-items-center">
-        <marquee scrollamount="8" class="text-white h3 m-0 fw-light">
-            <span v-for="item in dataNews" :key="item.id" class="me-5">
-                <img src="<?= base_url('assets/img/adhyaksa-icon.png') ?>" height="30" class="me-2" style="opacity:0.7">
-                {{ item.text_news }}
-            </span>
-        </marquee>
-    </div>
+    </main>
 </div>
 
 <?php $this->section("js") ?>
 <script>
-    function addZeroBefore(n) { return (n < 10 ? '0' : '') + n; }
+    function addZero(n) { return (n < 10 ? '0' : '') + n; }
 
     dataVue = {
         ...dataVue,
-        tanggal: "",
         jam: "",
-        dataNews: [],
-        dataAgenda: [], // Menggunakan struktur layout_1
+        tanggal: "",
         
-        // Data Khusus Layout 3
+        // Data Slideshow
         activeSlide: 0,
-        totalSlides: 3,
-        publicFinance: { pagu: 0, realisasi: 0, persen: 0, target_bulan: 0 },
-        pnbpData: [],
-        kurs: { usd: '15.400', eur: '16.800' } // Dummy/Default
+        totalSlides: 2,
+
+        // Data Utility (Sidebar)
+        jadwalSholat: { Subuh: '04:12', Dzuhur: '11:51', Ashar: '15:15', Maghrib: '17:58', Isya: '19:12' },
+        nextSholat: 'Ashar', // Nanti dibikin otomatis via JS
+        
+        // Data Finance (Dummy)
+        finance: {
+            pagu: 12000000000,
+            realisasi: 8500000000,
+            sisa: 3500000000,
+            persen: 70.8,
+            target_bulan: 75 // Target Boss Booster
+        },
+        dataAgenda: [], // Ambil dari API
+        
+        // Logic Boss Booster
+        isPerformanceSafe: true 
     }
 
     createdVue = function() {
-        setInterval(this.getDate, 1000);
-        setInterval(this.getTime, 1000);
-        this.getNews();
-        this.getAgenda(); // Pakai function lama
-        this.getPublicData(); // Function baru
+        setInterval(this.updateTime, 1000);
+        this.getAgenda();
+        this.checkBossBooster();
     }
 
     mountedVue = function() {
-        // Refresh konten
-        setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
-        setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
-        setInterval(() => this.getPublicData(), 60 * 1000);
-
-        // Slide Rotator (Ganti slide tiap 15 detik)
+        // Ganti slide setiap 15 detik
         setInterval(() => {
             this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
         }, 15000);
+
+        // Update sholat active (Simulasi)
+        setInterval(() => {
+            // Logic penentuan sholat aktif bisa ditaruh sini
+        }, 60000);
     }
 
     methodsVue = {
         ...methodsVue,
         
-        formatRupiah: function(number) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        formatRupiah: function(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
         },
 
-        getDate: function() {
-            const weekday = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const today = new Date();
-            this.tanggal = weekday[today.getDay()] + ', ' + today.getDate() + ' ' + monthNames[today.getMonth()] + ' ' + today.getFullYear();
+        updateTime: function() {
+            const d = new Date();
+            this.jam = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
+            
+            const days = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+            const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            this.tanggal = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
         },
 
-        getTime: function() {
-            const today = new Date();
-            this.jam = addZeroBefore(today.getHours()) + ":" + addZeroBefore(today.getMinutes());
-        },
-
-        getNews: function() {
-             axios.get('<?= base_url() ?>/api/news/news').then(res => {
-                if (res.data.status) this.dataNews = res.data.data;
-            });
-        },
-        
         getAgenda: function() {
-             axios.get('<?= base_url() ?>/api/display/agenda').then(res => {
+            axios.get('<?= base_url() ?>/api/display/agenda').then(res => {
                 if (res.data.status) this.dataAgenda = res.data.data;
             });
         },
 
-        // Simulasi Data Publik
-        getPublicData: function() {
-            // Simulasi API call
-            // axios.get('<?= base_url() ?>/api/public/display')...
-            
-            // Dummy Data untuk visualisasi
-            this.publicFinance = {
-                pagu: 50000000000,
-                realisasi: 32500000000,
-                persen: 65,
-                target_bulan: 70
-            };
-
-            this.pnbpData = [
-                { jenis: 'Uang Pengganti', nilai: 1500000000, icon: 'mdi mdi-gavel' },
-                { jenis: 'Denda Tilang', nilai: 250000000, icon: 'mdi mdi-ticket-percent' },
-                { jenis: 'Penjualan Barang Rampasan', nilai: 850000000, icon: 'mdi mdi-car-convertible' }
-            ];
-            
-            // Update Kurs dummy
-            this.kurs = { usd: 'Rp 15.850', eur: 'Rp 17.100' };
+        checkBossBooster: function() {
+            // FITUR INOVATIF: BOSS BOOSTER
+            // Jika realisasi di bawah target, lampu indikator jadi merah
+            if (this.finance.persen < this.finance.target_bulan) {
+                this.isPerformanceSafe = false;
+            } else {
+                this.isPerformanceSafe = true;
+            }
         }
     }
 </script>
