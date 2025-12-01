@@ -1,0 +1,11 @@
+/vendor
+/node_modules
+.env
+*.zip
+*.rar
+*.log
+*.json
+/xampp/
+/writable/cache/
+/public/uploads/
+/writable/*.json
