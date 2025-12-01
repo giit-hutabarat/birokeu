@@ -1,454 +1,454 @@
 <?php $this->section("style"); ?>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
-
 <style>
-    :root {
-        --bg-color: #080808;
-        --card-bg: rgba(20, 20, 20, 0.6);
-        --card-border: 1px solid rgba(255, 255, 255, 0.08);
-        --accent-gold: #D4AF37;
-        --accent-green: #0e4d2a;
-        --text-muted: #888;
-        --glass-blur: blur(20px);
-    }
-
-    /* GLOBAL RESET */
-    html, body {
-        height: 100vh; margin: 0; padding: 0;
-        background-color: var(--bg-color);
-        background-image: radial-gradient(circle at 10% 20%, rgba(14, 77, 42, 0.2) 0%, transparent 40%),
-                          radial-gradient(circle at 90% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 40%);
-        font-family: 'Outfit', sans-serif;
+    #tanggal {
         color: white;
-        overflow: hidden; /* Desktop TV Fix */
     }
 
-    /* === GRID SYSTEM (BENTO LAYOUT) === */
-    .dashboard-wrapper {
-        display: grid;
-        grid-template-columns: 280px 1fr 320px; /* Sidebar Kiri, Konten Tengah, Sidebar Kanan */
-        grid-template-rows: 80px 1fr 60px; /* Header, Konten, Ticker */
-        gap: 20px;
-        height: 100vh;
-        padding: 20px;
-        box-sizing: border-box;
+    #waktu {
+        color: yellow;
     }
 
-    /* COMMON CARD STYLE */
-    .bento-card {
-        background: var(--card-bg);
-        border: var(--card-border);
-        border-radius: 24px;
-        backdrop-filter: var(--glass-blur);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    /* text scroller */
+    #news-container-full {
+        position: absolute;
+        top: 90vh;
+        left: 0;
+        width: 100%;
+        height: 10vh;
+        background: #000;
+        z-index: 2;
         overflow: hidden;
-        position: relative;
-        display: flex; flex-direction: column;
+        /*transform: translate3d(0, 0, 0);*/
     }
 
-    /* === 1. HEADER (LOGO & INSTANSI) === */
-    .header-area {
-        grid-column: 1 / -1;
-        display: flex; align-items: center; justify-content: space-between;
-        padding: 0 20px;
-    }
-    .brand-box { display: flex; align-items: center; gap: 15px; }
-    .brand-text h1 { font-size: 1.8rem; margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-    .brand-text span { color: var(--accent-gold); font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; }
-
-    /* === 2. AGENDA MODULE (HERO SECTION - BESAR) === */
-    /* Posisi: Tengah, mengambil ruang paling dominan */
-    .agenda-hero {
-        grid-column: 2 / 3;
-        grid-row: 2 / 3;
-        padding: 30px;
-        position: relative;
-        background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.2) 100%);
-    }
-    
-    .section-label { 
-        font-size: 0.85rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 20px; display: block;
-    }
-
-    /* Tampilan Agenda Card Besar */
-    .agenda-list-container {
-        flex: 1; overflow-y: hidden; position: relative;
-    }
-    .agenda-scroll-anim { animation: scrollUpAgenda 45s linear infinite; }
-    
-    .agenda-card-item {
-        background: rgba(255,255,255,0.03);
-        border-left: 4px solid var(--accent-gold);
-        padding: 25px;
-        margin-bottom: 15px;
-        border-radius: 0 16px 16px 0;
-        display: grid;
-        grid-template-columns: 80px 1fr; /* Tanggal Kiri, Info Kanan */
-        gap: 20px;
-        align-items: center;
-        transition: transform 0.3s ease;
-    }
-    .agenda-card-item:hover { transform: translateX(10px); background: rgba(255,255,255,0.07); }
-
-    /* Tanggal Agenda (Kotak Kiri) */
-    .date-box {
-        text-align: center;
-        background: rgba(0,0,0,0.3);
-        padding: 10px; border-radius: 12px;
-        border: 1px solid rgba(255,255,255,0.1);
-    }
-    .date-d { font-size: 1.8rem; font-weight: 800; line-height: 1; color: white; display: block; }
-    .date-m { font-size: 0.8rem; text-transform: uppercase; color: var(--accent-gold); font-weight: 600; display: block; margin-top: 3px; }
-    .date-time { font-size: 0.75rem; background: var(--accent-green); color: white; padding: 2px 5px; border-radius: 4px; margin-top: 5px; display: inline-block; }
-
-    /* Info Agenda (Kanan) */
-    .agenda-info h3 { margin: 0 0 8px 0; font-size: 1.4rem; font-weight: 600; line-height: 1.2; font-family: 'Playfair Display', serif; }
-    .agenda-meta { display: flex; gap: 15px; font-size: 0.9rem; color: var(--text-muted); }
-    .agenda-meta i { color: var(--accent-gold); margin-right: 5px; }
-
-    /* === 3. FINANCE MODULE (SIDEBAR KIRI) === */
-    .finance-panel {
-        grid-column: 1 / 2;
-        grid-row: 2 / 3;
-        display: flex; flex-direction: column; gap: 20px;
-    }
-    .finance-card {
-        flex: 1; padding: 20px;
-        background: radial-gradient(circle at top right, rgba(14, 77, 42, 0.4), transparent);
-    }
-    .big-number { font-size: 2.5rem; font-weight: 800; color: white; line-height: 1; margin: 10px 0; }
-    .sub-number { font-size: 0.9rem; color: #ccc; }
-    
-    /* Progress Bar Mewah */
-    .progress-lux { height: 8px; background: rgba(255,255,255,0.1); border-radius: 10px; margin-top: 15px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent-gold), #fff); border-radius: 10px; box-shadow: 0 0 10px var(--accent-gold); }
-
-    /* === 4. UTILITY MODULE (SIDEBAR KANAN) === */
-    .utility-panel {
-        grid-column: 3 / 4;
-        grid-row: 2 / 3;
-        display: flex; flex-direction: column; gap: 20px;
-    }
-
-    /* Jam & Cuaca */
-    .time-weather-card {
-        flex: 0 0 auto; padding: 25px; text-align: center;
-        background: linear-gradient(to bottom, rgba(255,255,255,0.05), transparent);
-    }
-    .clock-digital { font-size: 3rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
-    .date-full { font-size: 0.9rem; color: var(--accent-gold); text-transform: uppercase; margin-top: 5px; letter-spacing: 1px; }
-    
-    .weather-row { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
-    .weather-temp { font-size: 1.8rem; font-weight: 700; }
-
-    /* Sholat List */
-    .sholat-card {
-        flex: 1; padding: 20px; overflow: hidden;
-    }
-    .sholat-row {
-        display: flex; justify-content: space-between; padding: 12px 10px;
-        border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 1rem;
-    }
-    .sholat-row.active {
-        background: var(--accent-gold); color: black; border-radius: 8px; font-weight: 800; border: none;
-        box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
-    }
-
-/* === 5. NEWS TICKER (FOOTER) === */
-    .ticker-area {
-        grid-column: 1 / -1;
-        background: var(--accent-green);
-        border-radius: 12px;
-        display: flex; align-items: center;
-        padding: 0; /* Padding di-nol-kan biar label nempel ujung */
-        font-weight: 600;
-        overflow: hidden;
-        position: relative;
-    }
-
-    .ticker-label { 
-        background: black; 
-        color: white; 
-        padding: 0 25px; /* Padding kiri kanan */
-        height: 100%; /* Full height sesuai bar */
-        display: flex; align-items: center; 
-        font-size: 0.9rem; 
-        text-transform: uppercase; 
-        letter-spacing: 1px;
-        white-space: nowrap; 
-        z-index: 10; /* Pastikan di atas layer teks */
-        position: relative;
-        box-shadow: 5px 0 15px rgba(0,0,0,0.3); /* Bayangan pemisah biar elegan */
-    }
-
-    /* Wrapper baru buat nge-masking teks biar gak nabrak */
-    .ticker-viewport {
-        flex: 1; /* Ambil sisa ruang */
-        overflow: hidden; /* KUNCINYA DISINI: Teks dipotong kalau lewat batas */
-        height: 100%;
-        display: flex; align-items: center;
-        mask-image: linear-gradient(to right, transparent, black 20px); /* Efek fade-in halus di kiri */
-        -webkit-mask-image: linear-gradient(to right, transparent, black 20px);
-    }
-
-    .ticker-track { 
-        white-space: nowrap; 
-        animation: marquee 30s linear infinite; 
-        font-size: 1.1rem; 
-        display: inline-block;
-        padding-left: 100%; /* Mulai dari luar layar kanan */
-    }
-
-    .ticker-item { margin-right: 50px; display: inline-block; }
-    
-    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-    /* ANIMATIONS */
-    @keyframes scrollUpAgenda { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-    /* =========================================
-       RESPONSIVE (MOBILE & TABLET)
-       ========================================= */
-    @media screen and (max-width: 1024px) {
-        html, body { overflow-y: auto; height: auto; }
-        
-        .dashboard-wrapper {
-            display: flex; flex-direction: column; height: auto; gap: 15px; padding: 15px;
-        }
-
-        /* Urutan Tampilan Mobile */
-        .header-area { order: 1; padding: 0; margin-bottom: 10px; }
-        .utility-panel { order: 2; gap: 10px; } /* Jam Paling Atas */
-        .agenda-hero { order: 3; min-height: 400px; } /* Agenda Besar di tengah */
-        .finance-panel { order: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } /* Finance jadi 2 kolom */
-        .ticker-area { order: 5; position: fixed; bottom: 0; left: 0; width: 100%; border-radius: 0; z-index: 99; height: 40px; }
-
-        /* Adjustment */
-        .brand-text h1 { font-size: 1.2rem; }
-        .time-weather-card { padding: 15px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
-        .weather-row { margin-top: 0; border: none; padding: 0; }
-        
-        .agenda-list-container { overflow-y: auto; } /* Manual Scroll di HP */
-        .agenda-scroll-anim { animation: none; }
-        
-        .sholat-card { display: none; } /* Hide sholat list detail di HP biar gak penuh, atau bisa dibikin horizontal scroll */
-        
-        .finance-card { min-height: 120px; }
-        .big-number { font-size: 1.8rem; }
+    #temperature {
+        color: yellow !important;
     }
 </style>
 <?php $this->endSection("style") ?>
 
-<div class="dashboard-wrapper">
-    
-    <header class="header-area">
-        <div class="brand-box">
-            <img src="<?php echo base_url('/' . ($logo == "" ? 'logo.png' : $logo)); ?>" width="60" />
-            <div class="brand-text">
-                <h1>Biro Keuangan</h1>
-                <span>KEJAKSAAN AGUNG RI</span>
-            </div>
-        </div>
-        <div class="d-flex align-items-center gap-2 px-3 py-1 rounded-pill" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1);">
-            <div style="width: 10px; height: 10px; background: #00e676; border-radius: 50%; box-shadow: 0 0 10px #00e676;"></div>
-            <span style="font-size: 0.8rem;">SYSTEM ONLINE</span>
-        </div>
-    </header>
+<nav class="navbar navbar-dark bg-dark transparan mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand d-flex align-items-center my-2 my-lg-0 me-lg-auto text-decoration-none" href="#">
+            <img style="margin:0 auto;margin-right: 10px;" id="logo" class="img-responsive" src="<?php echo base_url('/' . ($logo == "" ? 'logo.png' : $logo)); ?>" width="80" height="80" />
+            <span id="judul_1" class="h1 fw-bold"><?= $nama_instansi; ?><br />
+                <span id="judul_2" class="h5"><?= $alamat; ?></span>
+            </span>
+        </a>
 
-    <aside class="finance-panel">
-        <div class="bento-card finance-card">
-            <span class="section-label"><i class="mdi mdi-chart-bar"></i> Realisasi Anggaran</span>
-            <div class="mt-auto">
-                <div class="d-flex align-items-end gap-2">
-                    <div class="big-number">{{ finance.persen }}%</div>
-                    <div class="mb-2 text-muted">Tercapai</div>
+        <!--tanggal dan jam-->
+        <div class="text-center fw-bold">
+            <p id="tanggal">{{tanggal}}</p>
+            <p id="waktu">{{jam}}</p>
+        </div>
+
+    </div>
+</nav>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card bg-dark text-white transparan border-0">
+                <div class="card-header h5">
+                    <i class="mdi mdi-video"></i> Video
                 </div>
-                <div class="sub-number">{{ formatRupiah(finance.realisasi) }} / {{ formatRupiah(finance.pagu) }}</div>
-                <div class="progress-lux">
-                    <div class="progress-fill" :style="{ width: finance.persen + '%' }"></div>
+                <?php if ($video_youtube == 'no') { ?>
+					<!-- mp4 -->
+					<video id="myplayer" class="ratio ratio-16x9" controls <?= $video_muted; ?>>
+
+					</video>
+				<?php } else { ?>
+					<!-- youtube -->
+					<vue-plyr>
+						<div class="plyr__video-embed" id="player">
+							<iframe src="https://www.youtube.com/embed/<?= $videoId; ?>?origin=<?= base_url(); ?>&amp;autoplay=1&amp;loop=1&amp;iv_load_policy=3&amp;modestbranding=1&amp;playsinline=1&amp;showinfo=0&amp;rel=0&amp;enablejsapi=1" allowfullscreen allowtransparency allow="autoplay"></iframe>
+						</div>
+					</vue-plyr>
+				<?php } ?>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="card bg-dark text-white transparan border-0 mb-3">
+                <div class="card-header h5">
+                    <i class="mdi mdi-calendar"></i> Agenda
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        <li v-for="item in dataAgenda" :key="item.id">
+                            <h6 class="fw-bold">{{ item.nama_agenda }}, {{ item.tgl_agenda }}</h6>
+                            {{ item.tempat_agenda }}, {{ item.waktu }} - Selesai
+                            <hr />
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <div class="bento-card finance-card" style="background: radial-gradient(circle at bottom right, rgba(212, 175, 55, 0.2), transparent);">
-            <span class="section-label"><i class="mdi mdi-cash-multiple"></i> Total PNBP</span>
-            <div class="mt-auto">
-                <div class="big-number" style="color: var(--accent-gold);">{{ formatRupiah(pnbp.total) }}</div>
-                <div class="sub-number"><i class="mdi mdi-arrow-up"></i> +15% dari Target</div>
-            </div>
-        </div>
-    </aside>
+        <div class="col-sm-3">
+            <div class="card bg-dark text-white transparan border-0 mb-3">
+                <div class="card-header h5">
+                    <i class="mdi mdi-weather-cloudy"></i> Prakiraan Cuaca
+                </div>
+                <div class="card-body">
+                    <h5 class="mb-0">{{ dataCuaca.name }}, {{ dataCuaca_sys.country }}</h5>
 
-    <main class="bento-card agenda-hero">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <span class="section-label" style="font-size: 1.2rem; margin: 0;"><i class="mdi mdi-calendar-star"></i> AGENDA UTAMA</span>
-            <span class="badge bg-white text-dark">{{ dataAgenda.length }} Kegiatan Hari Ini</span>
-        </div>
-
-        <div class="agenda-list-container">
-            <div v-if="dataAgenda.length === 0" class="h-100 d-flex align-items-center justify-content-center text-muted">
-                <h3>TIDAK ADA JADWAL KEGIATAN</h3>
-            </div>
-            
-            <div v-else class="agenda-scroll-anim">
-                <div v-for="(item, i) in dataAgenda" :key="i" class="agenda-card-item">
-                    <div class="date-box">
-                        <span class="date-d">{{ getDayNum(item.waktu_tanggal) }}</span>
-                        <span class="date-m">{{ getMonthName(item.waktu_tanggal) }}</span>
-                        <span class="date-time">{{ item.waktu.substring(0,5) }}</span>
+                    <div v-for="item in dataCuaca.weather" :key="item.id">
+                        <h5 class="mb-0 fw-normal"> <img :src="'http://openweathermap.org/img/wn/' + item.icon + '.png'"> {{ item.main }}, {{ item.description }}</h5>
                     </div>
-                    <div class="agenda-info">
-                        <h3>{{ item.nama_agenda }}</h3>
-                        <div class="agenda-meta">
-                            <span><i class="mdi mdi-map-marker"></i> {{ item.tempat_agenda }}</span>
-                            <span><i class="mdi mdi-clock-outline"></i> {{ item.waktu }} WIB</span>
-                        </div>
+
+                    <p class="mb-0 h1" id="temperature"><strong>{{ Math.ceil(dataCuaca_main.temp_max) }}</strong>&deg;<span>C</span></p>
+
+                    <p>Feels like {{ Math.ceil(dataCuaca_main.feels_like) }}&deg;<span>C</span>. Humidity {{ dataCuaca_main.humidity }}%</p>
+
+                    <small class="text-muted">Data API openweathermap.org</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card bg-dark text-white transparan border-0 mt-3">
+        <div class="card-header h5">
+            <i class="mdi mdi-information"></i> Informasi
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col" v-for="item in dataInfo" :key="item.id">
+                    {{ item.tgl_news }}
+                    <h6 class="fw-bold">{{ item.text_news }}</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <div class="card card-body bg-dark text-white transparan py-0">
+            <span><i class="fa fa-info-circle"></i> Waktu sholat:
+                <?php if ($jadwal_sholat == 'excel') { ?>
+                    Import Excel
+                <?php } else { ?>
+                    API api.myquran.com
+                <?php } ?>
+            </span>
+        </div>
+        <div class="row g-0">
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <div class="card transparan border-0">
+                    <div class="card-body bg-blue-grey text-center">
+                        <h2 class="nama-solat">Imsak</h2>
+                        <span class="waktu-solat" id="imsak">{{ dataJadwalsholat.imsak }}</span>
                     </div>
                 </div>
-
-                <div v-for="(item, i) in dataAgenda" :key="'d-'+i" class="agenda-card-item">
-                    <div class="date-box">
-                        <span class="date-d">{{ getDayNum(item.waktu_tanggal) }}</span>
-                        <span class="date-m">{{ getMonthName(item.waktu_tanggal) }}</span>
-                        <span class="date-time">{{ item.waktu.substring(0,5) }}</span>
-                    </div>
-                    <div class="agenda-info">
-                        <h3>{{ item.nama_agenda }}</h3>
-                        <div class="agenda-meta">
-                            <span><i class="mdi mdi-map-marker"></i> {{ item.tempat_agenda }}</span>
-                            <span><i class="mdi mdi-clock-outline"></i> {{ item.waktu }} WIB</span>
-                        </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <div class="card transparan border-0">
+                    <div class="card-body bg-red text-center">
+                        <h2 class="nama-solat">Subuh</h2>
+                        <span class="waktu-solat" id="subuh">{{ dataJadwalsholat.subuh }}</span>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
-
-    <aside class="utility-panel">
-        <div class="bento-card time-weather-card">
-            <div class="clock-digital">{{ jam }}</div>
-            <div class="date-full">{{ tanggal }}</div>
-            
-            <div class="weather-row">
-                <i class="wi wi-day-cloudy" style="font-size: 2.5rem; color: #fff;"></i>
-                <div class="text-start">
-                    <div class="weather-temp">29°C</div>
-                    <div style="font-size: 0.8rem; opacity: 0.7;">Jakarta Selatan</div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <div class="card transparan border-0">
+                    <div class="card-body bg-cyan text-center">
+                        <h2 class="nama-solat">Dzuhur</h2>
+                        <span class="waktu-solat" id="dzuhur">{{ dataJadwalsholat.dzuhur }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <div class="card transparan border-0">
+                    <div class="card-body bg-green text-center">
+                        <h2 class="nama-solat">Ashar</h2>
+                        <span class="waktu-solat" id="ashar">{{ dataJadwalsholat.ashar }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <div class="card transparan border-0">
+                    <div class="card-body bg-orange text-center">
+                        <h2 class="nama-solat">Maghrib</h2>
+                        <span class="waktu-solat" id="maghrib">{{ dataJadwalsholat.maghrib }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                <div class="card transparan border-0">
+                    <div class="card-body bg-pink text-center">
+                        <h2 class="nama-solat">Isya</h2>
+                        <span class="waktu-solat" id="isya">{{ dataJadwalsholat.isya }}</span>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="bento-card sholat-card">
-            <span class="section-label mb-3">Jadwal Sholat</span>
-            <div style="overflow-y: auto;">
-                <div v-for="(time, name) in jadwalSholat" :key="name" 
-                     class="sholat-row" :class="{ 'active': name === nextPrayer }">
-                    <span>{{ name }}</span>
-                    <span>{{ time }}</span>
-                </div>
-            </div>
-        </div>
-    </aside>
-
-<footer class="ticker-area">
-        <div class="ticker-label">BREAKING NEWS</div>
-        
-        <div class="ticker-viewport">
-            <div class="ticker-track">
-                <?php if(!empty($dataNews)): ?>
-                    <span v-for="item in dataNews" :key="item.id" class="ticker-item">
-                        <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
-                    </span>
-                    <span v-for="item in dataNews" :key="'d-'+item.id" class="ticker-item">
-                        <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
-                    </span>
-                <?php else: ?>
-                    <span class="ticker-item">SELAMAT DATANG DI BIRO KEUANGAN KEJAKSAAN AGUNG RI...</span>
-                <?php endif; ?>
-            </div>
-        </div>
-    </footer>
+    </div>
 </div>
+
+<!--teks berjalan-->
+<div id="news-container-full">
+    <div class="position-absolute top-50 start-50 translate-middle w-100">
+        <ul class="marquee news-text">
+            <li v-for="item in dataNews" :key="item.id" style="display: inline;">
+                {{ item.text_news }} &bull;
+            </li>
+        </ul>
+    </div>
+</div>
+
+<?php $this->section("modal") ?>
+
+<?php $this->endSection("modal") ?>
 
 <?php $this->section("js") ?>
 <script>
-    function addZero(n) { return (n < 10 ? '0' : '') + n; }
+    //var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
+    function addZeroBefore(n) {
+        return (n < 10 ? '0' : '') + n;
+    }
 
     dataVue = {
         ...dataVue,
-        jam: "", tanggal: "",
-        
-        // Data Modules
-        dataNews: [], dataAgenda: [],
-        finance: { pagu: 15000000000, realisasi: 10500000000, sisa: 4500000000, persen: 70 },
-        pnbp: { total: 1250000000 },
-        jadwalSholat: { Subuh: '04:12', Dzuhur: '11:51', Ashar: '15:15', Maghrib: '17:58', Isya: '19:12' },
-        nextPrayer: 'Ashar',
-        
-        // Dummy Agenda with Date (Simulasi)
-        // Di real app, pastikan API lo kirim field 'waktu_tanggal' format YYYY-MM-DD
-        dataAgenda: [] 
+        tanggal: "",
+        jam: "",
+        dataNews: [],
+        dataInfo: [],
+        dataAgenda: [],
+        dataVideo: [],
+        dataJadwalsholat: [],
+        dataCuaca: [],
+        dataCuaca_weather: [],
+        dataCuaca_main: [],
+        dataCuaca_sys: [],
     }
 
     createdVue = function() {
-        setInterval(this.updateTime, 1000);
-        this.getNews(); 
+        setInterval(this.getDate, 1000);
+        setInterval(this.getTime, 1000);
+        this.getVideo();
+        this.getNews();
+        this.getInfo();
         this.getAgenda();
+        this.getJadwalsholat();
+        this.getCuaca();
     }
 
     mountedVue = function() {
         setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
+        setInterval(() => this.getInfo(), <?= $news_refresh; ?> * 1000);
         setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
     }
 
     methodsVue = {
         ...methodsVue,
-        
-        formatRupiah: function(num) {
-            if(num >= 1000000000) return (num/1000000000).toFixed(1) + ' M';
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+        getDate: function() {
+            const weekday = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+			const today = new Date();
+			const date = addZeroBefore(today.getDate()) + '-' + (addZeroBefore(today.getMonth() + 1)) + '-' + today.getFullYear();
+			let Hari = weekday[today.getDay()];
+			const Tanggal = date;
+			this.tanggal = Hari + ', ' + Tanggal;
         },
 
-        updateTime: function() {
-            const d = new Date();
-            this.jam = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
-            const days = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
-            const months = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-            this.tanggal = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-            
-            // Logic simple next prayer
-            const h = d.getHours();
-            if(h<4) this.nextPrayer='Subuh'; else if(h<12) this.nextPrayer='Dzuhur';
-            else if(h<15) this.nextPrayer='Ashar'; else if(h<18) this.nextPrayer='Maghrib';
-            else if(h<19) this.nextPrayer='Isya'; else this.nextPrayer='Subuh';
+        getTime: function() {
+            const today = new Date();
+            const time = addZeroBefore(today.getHours()) + ":" + addZeroBefore(today.getMinutes()) + ":" + addZeroBefore(today.getSeconds());
+            const Jam = time;
+            this.jam = Jam;
         },
 
-        // Helpers untuk Agenda Date Box
-        getDayNum: function(dateStr) {
-            // Asumsi dateStr = "2025-12-01" or handled by backend
-            // Jika kosong pakai tanggal hari ini
-            if(!dateStr) return new Date().getDate();
-            return new Date(dateStr).getDate();
-        },
-        getMonthName: function(dateStr) {
-            const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
-            if(!dateStr) return m[new Date().getMonth()];
-            return m[new Date(dateStr).getMonth()];
+        // Get News
+        getNews: function() {
+            this.loading = true;
+            axios.get('<?= base_url() ?>/api/news/news')
+                .then(res => {
+                    // handle success
+                    this.loading = false;
+                    var data = res.data;
+                    if (data.status == true) {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                        this.dataNews = data.data;
+                        //myModal.show();
+                    } else {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                    }
+                })
+                .catch(err => {
+                    // handle error
+                    console.log(err);
+                })
         },
 
-        getNews: function() { axios.get('<?= base_url() ?>/api/news/news').then(res => { if(res.data.status) this.dataNews = res.data.data; }).catch(e=>{}); },
-        getAgenda: function() { 
-            axios.get('<?= base_url() ?>/api/display/agenda').then(res => { 
-                if(res.data.status) {
-                    this.dataAgenda = res.data.data; 
-                    // Simulasi nambahin tanggal field kalo di API lo belom ada
-                    this.dataAgenda.forEach(item => {
-                        if(!item.waktu_tanggal) item.waktu_tanggal = new Date().toISOString().slice(0,10);
-                    });
-                }
-            }).catch(e=>{}); 
+        //Get Info
+        getInfo: function() {
+            this.loading = true;
+            axios.get('<?= base_url() ?>/api/news/info')
+                .then(res => {
+                    // handle success
+                    this.loading = false;
+                    var data = res.data;
+                    if (data.status == true) {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                        this.dataInfo = data.data;
+                        //myModal.show();
+                    } else {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                    }
+                })
+                .catch(err => {
+                    // handle error
+                    console.log(err);
+                })
+        },
+
+        // Get Video
+        getVideo: function() {
+            this.loading = true;
+            axios.get('<?= base_url(); ?>/api/display/video')
+                .then(res => {
+                    // handle success
+                    this.loading = false;
+                    var data = res.data;
+                    if (data.status == true) {
+                        //this.snackbar = true;
+                        //this.snackbarMessage = data.message;
+                        this.dataVideo = data.data;
+                        <?php if ($video_youtube == 'no') : ?>
+							this.playVideo();
+						<?php endif; ?>
+                    } else {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                    }
+                })
+                .catch(err => {
+                    // handle error
+                    console.log(err);
+                    var error = err.response
+                    if (error.data.expired == true) {
+                        this.snackbar = true;
+                        this.snackbarMessage = error.data.message;
+                        setTimeout(() => window.location.href = error.data.data.url, 1000);
+                    }
+                })
+        },
+
+        //Play Video MP4
+        playVideo: function() {
+			//Video Player
+			var player = document.getElementById("myplayer");
+		
+			var i = 0;
+			var videoSource = this.dataVideo;
+			var videoCount = videoSource.length;
+			player.setAttribute("src", videoSource[0]);
+			player.autoplay = true;
+        	player.load();
+
+			function videoPlay(videoNum) {
+				player.setAttribute("src", videoSource[videoNum]);
+				player.load();
+				player.play();
+			}
+
+			player.addEventListener('ended', myHandler, false);
+
+			function myHandler() {
+				if (i == (videoCount - 1)) {
+					i = 0;
+					axios.get('<?= base_url(); ?>/api/display/video')
+						.then(res => {
+							if (data.status == true) {
+								this.dataVideo = data.data;
+								videoSource = this.dataVideo;
+								videoCount = videoSource.length;
+							}
+						});
+					videoPlay(i);
+				} else {
+					i++;
+					videoPlay(i);
+				}
+			}
+		},
+
+        //Get Agenda
+        getAgenda: function() {
+            this.loading = true;
+            axios.get('<?= base_url() ?>/api/display/agenda')
+                .then(res => {
+                    // handle success
+                    this.loading = false;
+                    var data = res.data;
+                    if (data.status == true) {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                        this.dataAgenda = data.data;
+                    } else {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                    }
+                })
+                .catch(err => {
+                    // handle error
+                    console.log(err);
+                })
+        },
+
+        // Get Jadwal Sholat
+        getJadwalsholat: function() {
+            this.loading = true;
+            axios.get('<?= base_url() ?>/api/display/jadwalsholat')
+                .then(res => {
+                    // handle success
+                    this.loading = false;
+                    var data = res.data;
+                    if (data.status == true) {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                        this.dataJadwalsholat = data.data;
+                        console.log(this.dataJadwalsholat);
+                        //myModal.show();
+                    } else {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                    }
+                })
+                .catch(err => {
+                    // handle error
+                    console.log(err);
+                })
+        },
+
+        // Get Cuaca
+        getCuaca: function() {
+            this.loading = true;
+            axios.get('<?= base_url() ?>/api/display/cuaca')
+                .then(res => {
+                    // handle success
+                    this.loading = false;
+                    var data = res.data;
+                    if (data.status == true) {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                        this.dataCuaca = data.data;
+                        this.dataCuaca_weather = this.dataCuaca.weather;
+                        this.dataCuaca_main = this.dataCuaca.main;
+                        this.dataCuaca_sys = this.dataCuaca.sys;
+                        console.log(this.dataCuaca);
+                    } else {
+                        this.snackbar = true;
+                        this.snackbarMessage = data.message;
+                    }
+                })
+                .catch(err => {
+                    // handle error
+                    console.log(err);
+                })
         },
     }
 </script>
