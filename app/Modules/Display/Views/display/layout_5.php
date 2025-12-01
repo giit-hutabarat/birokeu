@@ -155,19 +155,54 @@
         box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
     }
 
-    /* === 5. NEWS TICKER (FOOTER) === */
+/* === 5. NEWS TICKER (FOOTER) === */
     .ticker-area {
         grid-column: 1 / -1;
         background: var(--accent-green);
         border-radius: 12px;
         display: flex; align-items: center;
-        padding: 0 20px;
+        padding: 0; /* Padding di-nol-kan biar label nempel ujung */
         font-weight: 600;
         overflow: hidden;
+        position: relative;
     }
-    .ticker-label { background: black; color: white; padding: 5px 15px; border-radius: 4px; font-size: 0.8rem; text-transform: uppercase; margin-right: 20px; white-space: nowrap; }
-    .ticker-track { white-space: nowrap; animation: marquee 30s linear infinite; font-size: 1.1rem; }
+
+    .ticker-label { 
+        background: black; 
+        color: white; 
+        padding: 0 25px; /* Padding kiri kanan */
+        height: 100%; /* Full height sesuai bar */
+        display: flex; align-items: center; 
+        font-size: 0.9rem; 
+        text-transform: uppercase; 
+        letter-spacing: 1px;
+        white-space: nowrap; 
+        z-index: 10; /* Pastikan di atas layer teks */
+        position: relative;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.3); /* Bayangan pemisah biar elegan */
+    }
+
+    /* Wrapper baru buat nge-masking teks biar gak nabrak */
+    .ticker-viewport {
+        flex: 1; /* Ambil sisa ruang */
+        overflow: hidden; /* KUNCINYA DISINI: Teks dipotong kalau lewat batas */
+        height: 100%;
+        display: flex; align-items: center;
+        mask-image: linear-gradient(to right, transparent, black 20px); /* Efek fade-in halus di kiri */
+        -webkit-mask-image: linear-gradient(to right, transparent, black 20px);
+    }
+
+    .ticker-track { 
+        white-space: nowrap; 
+        animation: marquee 30s linear infinite; 
+        font-size: 1.1rem; 
+        display: inline-block;
+        padding-left: 100%; /* Mulai dari luar layar kanan */
+    }
+
     .ticker-item { margin-right: 50px; display: inline-block; }
+    
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
     /* ANIMATIONS */
     @keyframes scrollUpAgenda { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
@@ -317,18 +352,24 @@
         </div>
     </aside>
 
-    <footer class="ticker-area">
+<footer class="ticker-area">
         <div class="ticker-label">BREAKING NEWS</div>
-        <div class="ticker-track">
-            <span v-for="item in dataNews" :key="item.id" class="ticker-item">
-                <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
-            </span>
-            <span v-for="item in dataNews" :key="'d-'+item.id" class="ticker-item">
-                <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
-            </span>
+        
+        <div class="ticker-viewport">
+            <div class="ticker-track">
+                <?php if(!empty($dataNews)): ?>
+                    <span v-for="item in dataNews" :key="item.id" class="ticker-item">
+                        <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
+                    </span>
+                    <span v-for="item in dataNews" :key="'d-'+item.id" class="ticker-item">
+                        <i class="mdi mdi-newspaper" style="color: var(--accent-gold);"></i> {{ item.text_news }}
+                    </span>
+                <?php else: ?>
+                    <span class="ticker-item">SELAMAT DATANG DI BIRO KEUANGAN KEJAKSAAN AGUNG RI...</span>
+                <?php endif; ?>
+            </div>
         </div>
     </footer>
-
 </div>
 
 <?php $this->section("js") ?>
