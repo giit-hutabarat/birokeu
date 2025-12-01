@@ -154,40 +154,44 @@
         box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
     }
 
-    /* === 5. NEWS TICKER (FOOTER - FIXED NO NABRAK) === */
+    /* === 5. NEWS TICKER (FOOTER - FIXED NO NABRAK & CENTERED) === */
     .ticker-area {
         grid-column: 1 / -1;
         background: var(--accent-green);
         border-radius: 12px;
         display: flex; align-items: center;
-        padding: 0; /* PENTING: Padding parent 0 biar label nempel ujung */
+        padding: 0;
         font-weight: 600;
-        overflow: hidden; /* Hide anything outside border radius */
+        overflow: hidden;
         position: relative;
     }
 
     .ticker-label { 
         background: black; 
         color: white; 
-        padding: 0 25px; /* Space dalam label */
+        padding: 0 25px; 
         height: 100%; 
         display: flex; align-items: center; 
         font-size: 0.9rem; 
         text-transform: uppercase; 
         letter-spacing: 1px; 
         white-space: nowrap; 
-        z-index: 20; /* Layer paling atas */
-        box-shadow: 5px 0 15px rgba(0,0,0,0.4); /* Bayangan pemisah */
+        z-index: 20;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.4);
         position: relative;
     }
 
-    /* CONTAINER PEMBATAS TEKS BERJALAN */
+    /* CONTAINER PEMBATAS TEKS BERJALAN (FIXED VERTICAL ALIGN) */
     .ticker-viewport {
-        flex: 1; /* Mengisi sisa ruang kosong */
-        overflow: hidden; /* KUNCI UTAMA: Memotong teks saat menyentuh label */
+        flex: 1;
+        overflow: hidden;
         height: 100%;
         position: relative;
-        /* Efek fade halus di sebelah kiri label */
+        /* Tambahan buat tengahin vertikal */
+        display: flex; 
+        align-items: center; 
+        
+        /* Masking fade effect */
         mask-image: linear-gradient(to right, transparent, black 20px);
         -webkit-mask-image: linear-gradient(to right, transparent, black 20px);
     }
@@ -197,8 +201,11 @@
         animation: marquee 30s linear infinite; 
         font-size: 1.1rem; 
         display: inline-block;
-        padding-left: 100%; /* Mulai dari luar layar kanan */
+        padding-left: 100%;
         will-change: transform;
+        /* Hapus margin/padding bawaan yg bikin naik */
+        margin: 0;
+        line-height: 1; 
     }
 
     .ticker-item { margin-right: 50px; display: inline-block; }
@@ -217,26 +224,22 @@
             display: flex; flex-direction: column; height: auto; gap: 15px; padding: 15px;
         }
 
-        /* Urutan Tampilan Mobile */
         .header-area { order: 1; padding: 0; margin-bottom: 10px; }
-        .utility-panel { order: 2; gap: 10px; } /* Jam Paling Atas */
-        .agenda-hero { order: 3; min-height: 400px; } /* Agenda Besar di tengah */
-        .finance-panel { order: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } /* Finance jadi 2 kolom */
+        .utility-panel { order: 2; gap: 10px; }
+        .agenda-hero { order: 3; min-height: 400px; }
+        .finance-panel { order: 4; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .ticker-area { order: 5; position: fixed; bottom: 0; left: 0; width: 100%; border-radius: 0; z-index: 99; height: 40px; }
 
         .brand-text h1 { font-size: 1.2rem; }
         .time-weather-card { padding: 15px; display: flex; justify-content: space-between; align-items: center; text-align: left; }
         .weather-row { margin-top: 0; border: none; padding: 0; }
         
-        .agenda-list-container { overflow-y: auto; } /* Manual Scroll di HP */
+        .agenda-list-container { overflow-y: auto; }
         .agenda-scroll-anim { animation: none; }
-        
         .sholat-card { display: none; } 
-        
         .finance-card { min-height: 120px; }
         .big-number { font-size: 1.8rem; }
         
-        /* Fix Ticker Mobile */
         .ticker-label { font-size: 0.7rem; padding: 0 10px; }
         .ticker-track { font-size: 0.9rem; }
     }
