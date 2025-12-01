@@ -1,332 +1,389 @@
 <?php $this->section("style"); ?>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Exo+2:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;600;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css">
 
 <style>
     :root {
-        --glass-bg: rgba(0, 0, 0, 0.35); /* Warna dasar kaca gelap */
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --adhyaksa-gold: #FFD700;
-        --adhyaksa-green: #00FF7F; /* Hijau neon dikit biar pop-up di dark mode */
-        --text-glow: 0 0 10px rgba(255, 215, 0, 0.5);
+        --sidebar-w: 25vw; /* Lebar Sidebar 25% layar */
+        --bg-dark: #0f172a;
+        --sidebar-bg: rgba(15, 23, 42, 0.95);
+        --gold: #F59E0B;
+        --accent-green: #10B981;
+        --accent-red: #EF4444;
+        --glass-border: 1px solid rgba(255,255,255,0.1);
     }
 
-    body {
-        font-family: 'Exo 2', sans-serif;
-        background-color: #000;
-        color: #fff;
-        overflow: hidden;
+    html, body {
+        height: 100vh; margin: 0; overflow: hidden;
+        background: #000; font-family: 'Inter', sans-serif; color: white;
     }
 
-    /* 1. VIDEO BACKGROUND LAYER */
-    #bg-video {
-        position: fixed;
-        right: 0;
-        bottom: 0;
-        min-width: 100%;
-        min-height: 100%;
-        z-index: -1;
-        object-fit: cover;
-        opacity: 0.6; /* Gelapin dikit biar teks kebaca */
-        filter: contrast(1.2) brightness(0.8);
+    /* --- LAYOUT GRID --- */
+    .dashboard-container {
+        display: flex; height: 100vh; width: 100vw;
     }
 
-    /* Fallback Gradient kalau video gagal load */
-    .bg-fallback {
-        position: fixed;
-        top:0; left:0; width:100%; height:100%; z-index:-2;
-        background: radial-gradient(circle at center, #0f2e1a 0%, #000000 100%);
-    }
-
-    /* 2. GLASSMORPHISM UTILITY */
-    .glass-panel {
-        background: var(--glass-bg);
-        backdrop-filter: blur(16px) saturate(120%);
-        -webkit-backdrop-filter: blur(16px) saturate(120%);
-        border: 1px solid var(--glass-border);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        border-radius: 16px;
-    }
-    
-    .glass-header {
-        background: rgba(0, 0, 0, 0.2);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--glass-border);
-    }
-
-    /* 3. TYPOGRAPHY & GLOW */
-    .text-gold { color: var(--adhyaksa-gold); }
-    .text-green-neon { color: var(--adhyaksa-green); }
-    
-    .glow-text {
-        text-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-    }
-    
-    .big-number {
-        font-family: 'Rajdhani', sans-serif;
-        font-weight: 700;
-        letter-spacing: 2px;
-    }
-
-    /* 4. CARD STYLING */
-    .card-pnbp {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        height: 100%;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .card-pnbp:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 30px rgba(255, 215, 0, 0.15);
-        border-color: var(--adhyaksa-gold);
-    }
-
-    .card-pnbp::before {
-        content: '';
-        position: absolute;
-        top: 0; left: -100%;
-        width: 100%; height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-        transition: 0.5s;
-    }
-    
-    .card-pnbp:hover::before {
-        left: 100%;
-    }
-
-    /* 5. ANIMATIONS */
-    .fade-enter-active, .fade-leave-active { transition: opacity 0.8s ease, transform 0.8s ease; }
-    .fade-enter-from { opacity: 0; transform: scale(0.95); }
-    .fade-leave-to { opacity: 0; transform: scale(1.05); }
-
-    /* Footer Ticker */
-    .glass-footer {
-        position: fixed;
-        bottom: 0; width: 100%;
-        background: rgba(0,0,0,0.6);
-        backdrop-filter: blur(10px);
-        border-top: 1px solid var(--glass-border);
-        height: 60px;
-        display: flex;
-        align-items: center;
+    /* 1. SIDEBAR (KIRI) */
+    .sidebar {
+        width: var(--sidebar-w);
+        background: var(--sidebar-bg);
+        border-right: 2px solid var(--gold);
+        display: flex; flex-direction: column;
+        padding: 2rem;
         z-index: 10;
+        box-shadow: 10px 0 50px rgba(0,0,0,0.5);
     }
+
+    /* Jam & Boss Booster Area */
+    .header-section { margin-bottom: 2rem; text-align: center; position: relative; }
+    .clock-big { font-family: 'Chakra Petch', sans-serif; font-size: 4rem; font-weight: 700; line-height: 1; }
+    .date-small { color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-top: 0.5rem; }
+    
+    /* Boss Booster: Pulse Indicator */
+    .boss-indicator {
+        position: absolute; top: 10px; right: 10px;
+        width: 12px; height: 12px; border-radius: 50%;
+        background: var(--accent-green);
+        box-shadow: 0 0 15px var(--accent-green);
+        animation: pulse 2s infinite;
+    }
+    .boss-indicator.warning { background: var(--gold); box-shadow: 0 0 15px var(--gold); }
+    .boss-indicator.danger { background: var(--accent-red); box-shadow: 0 0 15px var(--accent-red); animation: pulse-fast 0.5s infinite; }
+
+    /* Weather Widget */
+    .weather-card {
+        background: rgba(255,255,255,0.05); border-radius: 15px; padding: 1.5rem;
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 2rem; border: var(--glass-border);
+    }
+    .weather-temp { font-size: 2.5rem; font-weight: 700; font-family: 'Chakra Petch'; }
+    
+    /* Sholat Schedule */
+    .sholat-container { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .sholat-item {
+        display: flex; justify-content: space-between; padding: 12px 15px;
+        background: rgba(255,255,255,0.03); border-radius: 8px; font-weight: 500;
+        transition: all 0.3s;
+    }
+    .sholat-item.next-prayer {
+        background: var(--gold); color: #000; font-weight: 800; transform: scale(1.05);
+        box-shadow: 0 5px 20px rgba(245, 158, 11, 0.3); border: none;
+    }
+
+    /* 2. MAIN CONTENT (KANAN) */
+    .main-content {
+        flex: 1; display: flex; flex-direction: column;
+        background: #1e293b;
+    }
+
+    /* Top: TV / Video Area (Fixed Aspect Ratio 16:9 ish) */
+    .tv-section {
+        flex: 55; /* 55% Tinggi */
+        background: #000; position: relative; overflow: hidden;
+    }
+    .tv-wrapper { width: 100%; height: 100%; }
+    .tv-label {
+        position: absolute; top: 20px; left: 20px;
+        background: rgba(220, 38, 38, 0.9); color: white;
+        padding: 5px 15px; font-weight: bold; border-radius: 4px;
+        font-size: 0.9rem; z-index: 20; display: flex; align-items: center; gap: 8px;
+    }
+
+    /* Middle: Data & Agenda Split */
+    .data-section {
+        flex: 45; /* 45% Tinggi */
+        display: flex; border-top: 1px solid rgba(255,255,255,0.1);
+        background: radial-gradient(circle at top right, #1e293b 0%, #0f172a 100%);
+    }
+
+    /* Data: Keuangan (Carousel) */
+    .finance-area {
+        flex: 6; /* 60% Lebar */
+        padding: 2rem; border-right: 1px solid rgba(255,255,255,0.1);
+        position: relative; display: flex; flex-direction: column; justify-content: center;
+    }
+    
+    /* Data: Agenda List */
+    .agenda-area {
+        flex: 4; /* 40% Lebar */
+        padding: 1.5rem; background: rgba(0,0,0,0.2);
+        display: flex; flex-direction: column;
+    }
+    .agenda-title { font-size: 1.1rem; color: var(--gold); font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; border-bottom: 2px solid var(--gold); padding-bottom: 5px; display: inline-block;}
+    
+    .agenda-list { overflow: hidden; flex: 1; position: relative; }
+    .scroller-agenda { animation: scrollUp 40s linear infinite; }
+    .agenda-item {
+        background: rgba(255,255,255,0.05); border-left: 3px solid var(--accent-green);
+        padding: 10px; margin-bottom: 10px; border-radius: 0 6px 6px 0;
+    }
+    .agenda-time { font-weight: 800; color: var(--accent-green); font-size: 0.9rem; }
+    .agenda-desc { font-size: 0.95rem; line-height: 1.2; margin-top: 2px; }
+
+    /* Bottom: Running Text */
+    .ticker-bar {
+        height: 50px; background: #b91c1c; /* Merah Kejaksaan */
+        display: flex; align-items: center; overflow: hidden; z-index: 20;
+    }
+    .ticker-content { white-space: nowrap; padding-left: 100%; animation: marquee 25s linear infinite; font-size: 1.2rem; font-weight: 600; }
+
+    /* Animations */
+    @keyframes pulse { 0% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.6; transform: scale(1); } }
+    @keyframes pulse-fast { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+    @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+    @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+
+    /* Helper Chart Bar */
+    .progress-custom { height: 25px; background: rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; margin-top: 10px; }
+    .bar-fill { height: 100%; background: var(--accent-green); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-size: 0.8rem; font-weight: bold; color: #000; transition: width 1s ease; }
 </style>
 <?php $this->endSection("style") ?>
 
-<video autoplay muted loop id="bg-video">
-    <source src="<?= base_url('assets/video/bg-smoke.mp4') ?>" type="video/mp4">
-</video>
-<div class="bg-fallback"></div>
-
-<nav class="navbar glass-header mb-5 p-3 fixed-top">
-    <div class="container-fluid d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <img class="img-fluid me-3" style="filter: drop-shadow(0 0 8px rgba(255,255,255,0.2));" src="<?php echo base_url('/' . ($logo == "" ? 'logo.png' : $logo)); ?>" width="70" />
-            <div class="d-flex flex-column">
-                <span class="h2 fw-bold text-uppercase m-0 tracking-widest text-white">Biro Keuangan</span>
-                <span class="text-gold m-0" style="font-size: 1rem; letter-spacing: 3px;">KEJAKSAAN AGUNG R.I.</span>
-            </div>
-        </div>
-        <div class="text-end text-white">
-            <div class="display-6 fw-bold big-number glow-text">{{ jam }}</div>
-            <div class="h6 m-0 opacity-75">{{ tanggal }}</div>
-        </div>
-    </div>
-</nav>
-
-<div class="container-fluid d-flex align-items-center justify-content-center" style="height: 100vh; padding-top: 80px; padding-bottom: 60px;">
+<div class="dashboard-container">
     
-    <transition name="fade">
-        <div v-if="activeSlide === 0" class="w-100 px-5 text-center position-absolute">
-            <div class="mb-5">
-                <h5 class="text-gold text-uppercase letter-spacing-2 mb-2">Laporan Transparansi</h5>
-                <h1 class="display-3 fw-bold text-white glow-text">
-                    <i class="mdi mdi-cash-register me-2"></i> PENERIMAAN NEGARA BUKAN PAJAK
-                </h1>
-                <div class="mx-auto mt-3" style="width: 150px; height: 3px; background: linear-gradient(90deg, transparent, var(--adhyaksa-gold), transparent);"></div>
-            </div>
+    <div class="sidebar">
+        <div class="header-section">
+            <div class="boss-indicator" :class="bossStatus" title="Indikator Kinerja Biro"></div>
+            
+            <div class="clock-big">{{ jam }}</div>
+            <div class="date-small">{{ tanggal }}</div>
+        </div>
 
-            <div class="row g-4 justify-content-center px-5">
-                <div class="col-md-4">
-                    <div class="glass-panel card-pnbp p-5">
-                        <div class="mb-4">
-                            <i class="mdi mdi-gavel display-2 text-gold"></i>
-                        </div>
-                        <h4 class="text-white text-uppercase fw-light mb-3">Uang Pengganti</h4>
-                        <h2 class="big-number text-green-neon display-5" id="val-up">
-                            {{ formatRupiah(pnbpData.uang_pengganti) }}
-                        </h2>
-                    </div>
+        <div class="weather-card">
+            <div class="d-flex align-items-center">
+                <i class="wi wi-day-cloudy text-warning" style="font-size: 2.5rem; margin-right: 15px;"></i>
+                <div style="line-height:1.1;">
+                    <div style="font-size:0.9rem; color:#ccc;">Jakarta</div>
+                    <div class="fw-bold">Berawan</div>
                 </div>
-                <div class="col-md-4">
-                    <div class="glass-panel card-pnbp p-5">
-                        <div class="mb-4">
-                            <i class="mdi mdi-ticket-percent display-2 text-gold"></i>
-                        </div>
-                        <h4 class="text-white text-uppercase fw-light mb-3">Denda Tilang</h4>
-                        <h2 class="big-number text-green-neon display-5">
-                            {{ formatRupiah(pnbpData.denda_tilang) }}
-                        </h2>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass-panel card-pnbp p-5">
-                        <div class="mb-4">
-                            <i class="mdi mdi-car-pickup display-2 text-gold"></i>
-                        </div>
-                        <h4 class="text-white text-uppercase fw-light mb-3">Barang Rampasan</h4>
-                        <h2 class="big-number text-green-neon display-5">
-                            {{ formatRupiah(pnbpData.barang_rampasan) }}
-                        </h2>
-                    </div>
-                </div>
+            </div>
+            <div class="weather-temp">29°</div>
+        </div>
+
+        <h6 class="text-muted text-uppercase fw-bold mb-3"><i class="mdi mdi-mosque"></i> Jadwal Sholat</h6>
+        <div class="sholat-container">
+            <div v-for="(time, name) in jadwalSholat" :key="name" 
+                 class="sholat-item" :class="{ 'next-prayer': name === nextPrayer }">
+                <span>{{ name }}</span>
+                <span>{{ time }}</span>
             </div>
         </div>
-    </transition>
 
-    <transition name="fade">
-        <div v-if="activeSlide === 1" class="w-100 px-5 position-absolute">
-            <div class="row align-items-center">
-                <div class="col-md-5 text-center">
-                     <div class="position-relative d-inline-block p-5">
-                        <svg width="350" height="350" viewBox="0 0 200 200">
-                            <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="15" />
-                            <circle cx="100" cy="100" r="90" fill="none" stroke="var(--adhyaksa-gold)" stroke-width="15" 
-                                    stroke-dasharray="565" :stroke-dashoffset="565 - (565 * financeData.persen / 100)" 
-                                    transform="rotate(-90 100 100)" style="transition: stroke-dashoffset 2s ease-out;" />
-                        </svg>
-                        <div class="position-absolute top-50 start-50 translate-middle text-center">
-                            <h1 class="display-2 big-number text-white fw-bold">{{ financeData.persen }}%</h1>
-                            <span class="text-gold text-uppercase">Terserap</span>
-                        </div>
-                     </div>
-                </div>
-                <div class="col-md-7">
-                    <h5 class="text-gold mb-2">MONITORING DIPA</h5>
-                    <h1 class="display-4 fw-bold mb-5">REALISASI ANGGARAN</h1>
-                    
-                    <div class="glass-panel p-4 mb-3 d-flex justify-content-between align-items-center">
-                        <span class="h3 m-0"><i class="mdi mdi-safe"></i> Total Pagu</span>
-                        <span class="h2 big-number text-white m-0">{{ formatRupiah(financeData.pagu) }}</span>
-                    </div>
-                    
-                    <div class="glass-panel p-4 mb-3 d-flex justify-content-between align-items-center" style="border-left: 5px solid var(--adhyaksa-green);">
-                        <span class="h3 m-0"><i class="mdi mdi-chart-line"></i> Realisasi</span>
-                        <span class="h2 big-number text-green-neon m-0">{{ formatRupiah(financeData.realisasi) }}</span>
-                    </div>
-
-                    <div class="glass-panel p-4 d-flex justify-content-between align-items-center" style="border-left: 5px solid red;">
-                        <span class="h3 m-0"><i class="mdi mdi-alert-circle-outline"></i> Sisa Anggaran</span>
-                        <span class="h2 big-number text-white m-0">{{ formatRupiah(financeData.sisa) }}</span>
-                    </div>
-                </div>
-            </div>
+        <div class="mt-auto text-center pt-4 border-top border-secondary">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=BukuTamu" width="80" class="mb-2 bg-white p-1 rounded">
+            <div style="font-size:0.8rem; color:#aaa;">Scan Buku Tamu</div>
         </div>
-    </transition>
-
-</div>
-
-<div class="glass-footer">
-    <div class="bg-gold text-dark px-4 h-100 d-flex align-items-center fw-bold fs-4" style="background: var(--adhyaksa-gold);">
-        INFO TERKINI
     </div>
-    <div class="flex-grow-1 overflow-hidden">
-        <marquee class="fs-4 mt-1">
-            <span v-for="item in dataNews" :key="item.id" class="me-5 text-shadow">
-                <i class="mdi mdi-information text-gold"></i> {{ item.text_news }}
-            </span>
-        </marquee>
+
+    <div class="main-content">
+        
+        <div class="tv-section">
+            <div class="tv-label">
+                <span class="spinner-grow spinner-grow-sm bg-white" role="status"></span>
+                LIVE STREAMING
+            </div>
+            <div class="tv-wrapper">
+                <?php 
+                    // Logic Pembersih ID Youtube (Sama kayak sebelumnya)
+                    $finalVideoId = $videoId;
+                    if (preg_match('%(?:youtube(?:-nocookie)?\.com/(?:[^/]+/.+/|(?:v|e(?:mbed)?)/|.*[?&]v=)|youtu\.be/)([^"&?/ ]{11})%i', $videoId, $match)) { $finalVideoId = $match[1]; }
+                    $finalVideoId = trim($finalVideoId);
+                    if (empty($finalVideoId)) { $finalVideoId = 'r3wW21ddf9U'; } // Default Live TV (misal Kompas/AlJazeera)
+                ?>
+                <?php if ($video_youtube == 'no') : ?>
+                    <video id="myplayer" autoplay muted loop style="width:100%; height:100%; object-fit:cover;"></video>
+                <?php else : ?>
+                    <iframe width="100%" height="100%" 
+                        src="https://www.youtube.com/embed/<?= $finalVideoId; ?>?autoplay=1&mute=1&loop=1&playlist=<?= $finalVideoId; ?>&controls=0&showinfo=0" 
+                        frameborder="0" allow="autoplay; encrypted-media">
+                    </iframe>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <div class="data-section">
+            
+            <div class="finance-area">
+                <div id="carouselFinance" class="carousel slide carousel-fade h-100" data-bs-ride="carousel">
+                    <div class="carousel-inner h-100">
+                        
+                        <div class="carousel-item active h-100 d-flex flex-column justify-content-center">
+                            <h3 class="fw-bold mb-4"><i class="mdi mdi-chart-bar text-warning"></i> REALISASI ANGGARAN</h3>
+                            <div class="mb-4">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Penyerapan Global</span>
+                                    <span class="fw-bold text-warning">{{ finance.persen }}%</span>
+                                </div>
+                                <div class="progress-custom">
+                                    <div class="bar-fill" :style="{ width: finance.persen + '%' }">{{ formatRupiah(finance.realisasi) }}</div>
+                                </div>
+                            </div>
+                            <div class="row text-center mt-3">
+                                <div class="col-6 border-end border-secondary">
+                                    <small class="text-muted">Total Pagu</small>
+                                    <h4 class="fw-bold">{{ formatRupiah(finance.pagu) }}</h4>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Sisa Anggaran</small>
+                                    <h4 class="fw-bold text-danger">{{ formatRupiah(finance.sisa) }}</h4>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="carousel-item h-100 d-flex flex-column justify-content-center">
+                            <h3 class="fw-bold mb-4"><i class="mdi mdi-cash-register text-success"></i> PNBP TERKINI</h3>
+                            <div class="row g-3">
+                                <div class="col-12">
+                                    <div class="bg-dark p-3 rounded d-flex justify-content-between align-items-center border border-secondary">
+                                        <div><i class="mdi mdi-gavel text-warning"></i> Uang Pengganti</div>
+                                        <div class="h4 m-0 fw-bold">{{ formatRupiah(pnbp.uang_pengganti) }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="bg-dark p-3 rounded d-flex justify-content-between align-items-center border border-secondary">
+                                        <div><i class="mdi mdi-ticket-percent text-info"></i> Denda Tilang</div>
+                                        <div class="h4 m-0 fw-bold">{{ formatRupiah(pnbp.denda_tilang) }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="agenda-area">
+                <div class="agenda-title">Agenda Biro</div>
+                <div class="agenda-list">
+                    <div v-if="dataAgenda.length === 0" class="text-center text-muted mt-5">Tidak ada agenda.</div>
+                    <div v-else class="scroller-agenda">
+                        <div v-for="(item, i) in dataAgenda" :key="i" class="agenda-item">
+                            <div class="agenda-time"><i class="mdi mdi-clock-outline"></i> {{ item.waktu.substring(0,5) }} WIB</div>
+                            <div class="agenda-desc">{{ item.nama_agenda }}</div>
+                            <small class="text-muted">{{ item.tempat_agenda }}</small>
+                        </div>
+                        <div v-for="(item, i) in dataAgenda" :key="'d-'+i" class="agenda-item">
+                            <div class="agenda-time"><i class="mdi mdi-clock-outline"></i> {{ item.waktu.substring(0,5) }} WIB</div>
+                            <div class="agenda-desc">{{ item.nama_agenda }}</div>
+                            <small class="text-muted">{{ item.tempat_agenda }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="ticker-bar">
+            <div class="ticker-content">
+                <span v-for="item in dataNews" :key="item.id">
+                    <span class="text-warning">INFO:</span> {{ item.text_news }} &nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;
+                </span>
+                <span v-for="item in dataNews" :key="'d-'+item.id">
+                    <span class="text-warning">INFO:</span> {{ item.text_news }} &nbsp;&nbsp;&nbsp;&bull;&nbsp;&nbsp;&nbsp;
+                </span>
+            </div>
+        </div>
+
     </div>
 </div>
 
 <?php $this->section("js") ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-
 <script>
-    function addZeroBefore(n) { return (n < 10 ? '0' : '') + n; }
+    function addZero(n) { return (n < 10 ? '0' : '') + n; }
 
     dataVue = {
         ...dataVue,
-        tanggal: "",
-        jam: "",
-        dataNews: [],
+        jam: "", tanggal: "",
         
-        // State Slide & Data
-        activeSlide: 0,
-        totalSlides: 2, // Ubah sesuai jumlah slide
+        // Data Core
+        dataNews: [], dataAgenda: [], dataVideo: [],
         
-        // Dummy Data (Nanti ganti fetch API)
-        pnbpData: {
-            uang_pengganti: 1500000000,
-            denda_tilang: 250000000,
-            barang_rampasan: 850000000
-        },
-        financeData: {
-            pagu: 15000000000,
-            realisasi: 9500000000,
-            sisa: 5500000000,
-            persen: 63.3
-        }
+        // Data Finance (Dummy)
+        finance: { pagu: 15000000000, realisasi: 9500000000, sisa: 5500000000, persen: 63.3, target: 65 },
+        pnbp: { uang_pengganti: 1250000000, denda_tilang: 350000000 },
+        
+        // Utility
+        jadwalSholat: { Subuh: '04:15', Dzuhur: '11:52', Ashar: '15:15', Maghrib: '17:58', Isya: '19:10' },
+        nextPrayer: 'Ashar',
+        
+        // Boss Booster State
+        bossStatus: 'ok' // ok (hijau), warning (kuning), danger (merah)
     }
 
     createdVue = function() {
-        setInterval(this.getDate, 1000);
-        setInterval(this.getTime, 1000);
-        this.getNews();
+        this.updateTime();
+        setInterval(this.updateTime, 1000);
         
-        // Panggil data awal
-        this.getRealData();
+        // Fetch Data
+        this.getNews(); this.getAgenda(); this.getVideo();
+        
+        // Check Performance
+        this.checkBossPerformance();
     }
 
     mountedVue = function() {
-        // Auto Refresh Data
         setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
-        setInterval(() => this.getRealData(), 60 * 1000);
-
-        // Slide Rotation (Ganti tiap 15 detik)
-        setInterval(() => {
-            this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
-            
-            // Trigger animasi angka setiap ganti slide (Simple logic)
-            // Di Vue reactivity akan handle update, tapi untuk efek 'counting up'
-            // bisa pake watcher kalau mau kompleks.
-        }, 15000);
+        setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
+        
+        // Carousel Finance Slide Otomatis
+        var myCarousel = document.querySelector('#carouselFinance');
+        var carousel = new bootstrap.Carousel(myCarousel, { interval: 10000, ride: 'carousel' });
     }
 
     methodsVue = {
         ...methodsVue,
-
-        formatRupiah: function(number) {
-            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(number);
+        
+        formatRupiah: function(num) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
         },
 
-        getDate: function() {
-            const weekday = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-            const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const today = new Date();
-            this.tanggal = weekday[today.getDay()] + ', ' + today.getDate() + ' ' + monthNames[today.getMonth()] + ' ' + today.getFullYear();
-        },
-
-        getTime: function() {
-            const today = new Date();
-            this.jam = addZeroBefore(today.getHours()) + ":" + addZeroBefore(today.getMinutes()) + ":" + addZeroBefore(today.getSeconds());
-        },
-
-        getNews: function() {
-            // Gunakan API existing lo
-            axios.get('<?= base_url() ?>/api/news/news').then(res => {
-                if(res.data.status) this.dataNews = res.data.data;
-            });
-        },
-
-        getRealData: function() {
-            // Disini lo tembak API Module Keuangan lo nanti
-            // axios.get('<?= base_url() ?>/api/display/finance_summary')...
-            console.log("Fetching new data...");
+        updateTime: function() {
+            const d = new Date();
+            this.jam = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
+            const days = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+            const months = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
+            this.tanggal = `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
             
-            // Simulasi update data acak untuk testing animasi
-            // this.pnbpData.uang_pengganti += 100000; 
+            // Logic Simple Next Prayer (Bisa dikembangin pake library PrayerTimes)
+            // Disini cuma dummy logic
+            const currentHour = d.getHours();
+            if(currentHour < 4) this.nextPrayer = 'Subuh';
+            else if(currentHour < 12) this.nextPrayer = 'Dzuhur';
+            else if(currentHour < 15) this.nextPrayer = 'Ashar';
+            else if(currentHour < 18) this.nextPrayer = 'Maghrib';
+            else if(currentHour < 19) this.nextPrayer = 'Isya';
+            else this.nextPrayer = 'Subuh';
+        },
+
+        // --- FETCHING API (Gunakan variable lo yang ada) ---
+        getNews: function() { axios.get('<?= base_url() ?>/api/news/news').then(res => { if(res.data.status) this.dataNews = res.data.data; }).catch(e=>{}); },
+        getAgenda: function() { axios.get('<?= base_url() ?>/api/display/agenda').then(res => { if(res.data.status) this.dataAgenda = res.data.data; }).catch(e=>{}); },
+        
+        getVideo: function() {
+             axios.get('<?= base_url(); ?>/api/video/display').then(res => {
+                if (res.data.status && res.data.data) {
+                    this.dataVideo = res.data.data;
+                    <?php if ($video_youtube == 'no') : ?> 
+                       // Logic play local video
+                       // ... (Implementasi playVideo function lo yang lama)
+                    <?php endif; ?>
+                }
+            }).catch(e=>{});
+        },
+
+        // --- BOSS BOOSTER LOGIC ---
+        checkBossPerformance: function() {
+            // Logika: Jika Realisasi < Target, maka Danger
+            // Jika Realisasi mendekati Target (selisih 2%), maka Warning
+            const diff = this.finance.target - this.finance.persen;
+            
+            if (diff > 5) {
+                this.bossStatus = 'danger'; // Merah Kedip Cepat
+            } else if (diff > 0) {
+                this.bossStatus = 'warning'; // Kuning Solid
+            } else {
+                this.bossStatus = 'ok'; // Hijau Pulse (Aman)
+            }
         }
     }
 </script>

@@ -277,7 +277,7 @@
 
             <div v-else-if="activeSlide === 1" key="agenda" class="big-card">
                 <div class="mb-5 border-bottom border-secondary pb-3">
-                    <h1 class="display-3 fw-bold"><i class="mdi mdi-calendar-check text-gold"></i> Agenda Hari Ini</h1>
+                    <h1 class="display-3 fw-bold"><i class="mdi mdi-calendar-check text-gold"></i> Agenda Karo Keuangan</h1>
                 </div>
 
                 <div class="row">
