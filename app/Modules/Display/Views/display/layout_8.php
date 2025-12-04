@@ -291,7 +291,7 @@
 
     <div class="layer-dark">
         <div class="brand-box">
-            <img src="<?= base_url('assets/images/logo-kejaksaan.png') ?>" class="brand-logo-img" alt="Logo">
+            <img src="<?= base_url('images/logo-kejaksaan.png') ?>" class="brand-logo-img" alt="Logo">
             <div class="brand-text-col">
                 <div class="brand-title">BIRO KEUANGAN</div>
                 <span class="brand-sub">KEJAKSAAN AGUNG REPUBLIK INDONESIA</span>
