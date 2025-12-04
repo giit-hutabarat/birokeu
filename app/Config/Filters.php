@@ -59,6 +59,7 @@ class Filters extends BaseConfig
                 // 'api/setting/general',
                 //'api/user/changepassword',
                 '/datasidang',
+                '/public/*',
                 
                 // --- RUTE SIDANG (DIKECUALIKAN DARI FILTER GLOBAL) ---
                 'sidang', 
