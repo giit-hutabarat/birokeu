@@ -291,7 +291,7 @@
 
     <div class="layer-dark">
         <div class="brand-box">
-            <img src="<?= base_url('images/logo-kejaksaan.png') ?>" class="brand-logo-img" alt="Logo">
+            <img src="<?= base_url('assets/images/logo-kejaksaan.png') ?>" class="brand-logo-img" alt="Logo">
             <div class="brand-text-col">
                 <div class="brand-title">BIRO KEUANGAN</div>
                 <span class="brand-sub">KEJAKSAAN AGUNG REPUBLIK INDONESIA</span>
@@ -350,80 +350,81 @@
 <script>
     function addZero(n) { return (n < 10 ? '0' : '') + n; }
 
-    new Vue({
-        el: '.wrapper',
-        data: {
-            jam: "", tanggal: "",
-            dataNews: [], dataAgenda: [],
-            finance: { pagu: 15000000000, realisasi: 8500000000, persen: 56 },
-            pnbp: { total: 1300000000 },
-            jadwalSholat: { Subuh: '04:12', Dzuhur: '11:51', Ashar: '15:15', Maghrib: '17:58', Isya: '19:12' },
-            nextPrayer: 'Ashar',
-            currentIndex: 0,
-            currentAgenda: {}
-        },
-        created() {
-            setInterval(this.updateTime, 1000);
-            this.getNews(); 
-            this.getAgenda();
-        },
-        mounted() {
-            setInterval(() => this.getNews(), 60000); // 1 menit
-            setInterval(() => this.getAgenda(), 60000);
+    dataVue = {
+        ...dataVue,
+        jam: "", tanggal: "",
+        
+        dataNews: [], dataAgenda: [],
+        finance: { pagu: 15000000000, realisasi: 8500000000, sisa: 6500000000, persen: 56 },
+        pnbp: { total: 1250000000 },
+        jadwalSholat: { Subuh: '04:12', Dzuhur: '11:51', Ashar: '15:15', Maghrib: '17:58', Isya: '19:12' },
+        nextPrayer: 'Ashar',
+        
+        // Logic Slide Agenda
+        currentIndex: 0,
+        currentAgenda: {}
+    }
 
-            // Auto Slide Agenda
-            setInterval(() => {
-                if(this.dataAgenda.length > 0) {
-                    this.currentIndex = (this.currentIndex + 1) % this.dataAgenda.length;
-                    this.currentAgenda = this.dataAgenda[this.currentIndex];
-                }
-            }, 8000); // Sedikit diperlambat jadi 8 detik biar enak baca
+    createdVue = function() {
+        setInterval(this.updateTime, 1000);
+        this.getNews(); 
+        this.getAgenda();
+    }
+
+    mountedVue = function() {
+        setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
+        setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
+
+        // Auto Slide Agenda tiap 6 detik
+        setInterval(() => {
+            if(this.dataAgenda.length > 0) {
+                this.currentIndex = (this.currentIndex + 1) % this.dataAgenda.length;
+                this.currentAgenda = this.dataAgenda[this.currentIndex];
+            }
+        }, 6000);
+    }
+
+    methodsVue = {
+        ...methodsVue,
+        
+        formatRupiahShort: function(num) {
+            if(num >= 1000000000) return (num/1000000000).toFixed(1) + ' M';
+            if(num >= 1000000) return (num/1000000).toFixed(1) + ' Jt';
+            return (num/1000).toFixed(0) + ' K';
         },
-        methods: {
-            formatRupiahShort(num) {
-                if(num >= 1000000000) return (num/1000000000).toFixed(1) + ' M';
-                if(num >= 1000000) return (num/1000000).toFixed(0) + ' Jt';
-                return (num/1000).toFixed(0) + ' K';
-            },
-            updateTime() {
-                const d = new Date();
-                this.jam = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
-                const days = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
-                const m = ["JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI", "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"];
-                this.tanggal = `${days[d.getDay()]}, ${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
-                
-                // Logic Sholat highlight sederhana
-                const h = d.getHours();
-                if(h<4) this.nextPrayer='Subuh'; else if(h<12) this.nextPrayer='Dzuhur';
-                else if(h<15) this.nextPrayer='Ashar'; else if(h<18) this.nextPrayer='Maghrib';
-                else if(h<19) this.nextPrayer='Isya'; else this.nextPrayer='Subuh';
-            },
-            getDayNum(dateStr) { return dateStr ? new Date(dateStr).getDate() : new Date().getDate(); },
-            getMonthName(dateStr) { 
-                const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
-                return dateStr ? m[new Date(dateStr).getMonth()] : m[new Date().getMonth()]; 
-            },
-            getNews() { 
-                // Ganti endpoint sesuai controller lo
-                // axios.get('<?= base_url() ?>/api/news').then(res => { if(res.data.status) this.dataNews = res.data.data; });
-                // Dummy Data
-                this.dataNews = [
-                    {id:1, text_news: "PEMBAHASAN RENCANA ANGGARAN TAHUN 2026 AKAN DILAKSANAKAN MINGGU DEPAN"},
-                    {id:2, text_news: "MOHON UNTUK SELURUH PEGAWAI MELAKUKAN ABSENSI TEPAT WAKTU"}
-                ];
-            },
-            getAgenda() { 
-                // Ganti endpoint sesuai controller lo
-                // axios.get('<?= base_url() ?>/api/agenda').then(res => ... );
-                // Dummy Data buat preview
-                const dummy = [
-                    { nama_agenda: "Rapat Pembahasan Rencana Pembentukan UPT Rupbasan", waktu: "13:00", tempat_agenda: "Ruang Rapat Biro Perencanaan (403)", waktu_tanggal: "2025-12-04" },
-                    { nama_agenda: "Kunjungan Kerja Jaksa Agung Muda Pembinaan", waktu: "09:00", tempat_agenda: "Aula Utama", waktu_tanggal: "2025-12-05" }
-                ];
-                this.dataAgenda = dummy;
-                this.currentAgenda = dummy[0];
-            },
-        }
-    });
+
+        updateTime: function() {
+            const d = new Date();
+            this.jam = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
+            const days = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+            const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
+            this.tanggal = `${days[d.getDay()]}, ${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
+            
+            const h = d.getHours();
+            if(h<4) this.nextPrayer='Subuh'; else if(h<12) this.nextPrayer='Dzuhur';
+            else if(h<15) this.nextPrayer='Ashar'; else if(h<18) this.nextPrayer='Maghrib';
+            else if(h<19) this.nextPrayer='Isya'; else this.nextPrayer='Subuh';
+        },
+        
+        // Helpers
+        getDayNum: function(dateStr) { return dateStr ? new Date(dateStr).getDate() : new Date().getDate(); },
+        getMonthName: function(dateStr) { 
+            const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
+            return dateStr ? m[new Date(dateStr).getMonth()] : m[new Date().getMonth()]; 
+        },
+
+        getNews: function() { axios.get('<?= base_url() ?>/api/news/news').then(res => { if(res.data.status) this.dataNews = res.data.data; }).catch(e=>{}); },
+        getAgenda: function() { 
+            axios.get('<?= base_url() ?>/api/display/agenda').then(res => { 
+                if(res.data.status && res.data.data.length > 0) {
+                    this.dataAgenda = res.data.data;
+                    // Fallback date
+                    this.dataAgenda.forEach(item => { if(!item.waktu_tanggal) item.waktu_tanggal = new Date().toISOString().slice(0,10); });
+                    // Set initial
+                    this.currentAgenda = this.dataAgenda[0];
+                }
+            }).catch(e=>{}); 
+        },
+    }
 </script>
 <?php $this->endSection("js") ?>
