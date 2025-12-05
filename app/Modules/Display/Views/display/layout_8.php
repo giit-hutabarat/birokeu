@@ -279,7 +279,7 @@
         </div>
 
         <div class="upcoming-box">
-            <div class="up-label">AGENDA 7 HARI MENDATANG</div>
+            <div class="up-label">AGENDA HARI KERJA BERIKUTNYA</div>
             
             <div class="up-list" v-if="upcomingAgenda.length > 0">
                 <div class="up-item" v-for="(item, idx) in upcomingAgenda.slice(0, 3)" :key="idx">
@@ -415,16 +415,29 @@
             return dateStr ? m[new Date(dateStr).getMonth()] : m[new Date().getMonth()]; 
         },
         
+        // METHOD BARU: Generate 5 HARI KERJA ke depan (Skip Sabtu/Minggu)
         generateNext7Days: function() {
             let list = [];
             let d = new Date();
-            for(let i=1; i<=7; i++) {
+            let added = 0; // Hitung berapa hari kerja yang udah dapet
+            let i = 1;     // Counter hari besok, lusa, dst
+
+            // Loop sampai kita dapet 5 hari kerja
+            while(added < 5) {
                 let next = new Date(d);
                 next.setDate(d.getDate() + i);
-                let year = next.getFullYear();
-                let month = String(next.getMonth() + 1).padStart(2, '0');
-                let day = String(next.getDate()).padStart(2, '0');
-                list.push(`${year}-${month}-${day}`);
+                let dayOfWeek = next.getDay(); // 0 = Minggu, 6 = Sabtu
+
+                // LOGIC: Hanya ambil jika BUKAN Sabtu (6) dan BUKAN Minggu (0)
+                if(dayOfWeek !== 0 && dayOfWeek !== 6) {
+                    let year = next.getFullYear();
+                    let month = String(next.getMonth() + 1).padStart(2, '0');
+                    let day = String(next.getDate()).padStart(2, '0');
+                    list.push(`${year}-${month}-${day}`);
+                    added++; // Nambah 1 kuota hari kerja
+                }
+                
+                i++; // Cek hari berikutnya
             }
             this.listHariKosong = list;
         },
