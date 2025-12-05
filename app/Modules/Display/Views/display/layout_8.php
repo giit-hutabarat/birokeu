@@ -223,10 +223,12 @@
                 <div class="clock-date">{{ tanggal }}</div>
             </div>
             <div class="weather-widget">
-                <i class="wi wi-day-sunny text-warning" style="font-size: 4rem;"></i>
+                <i :class="'wi ' + weather.iconClass + ' text-warning'" style="font-size: 4rem;"></i>
                 <div>
-                    <div class="temp-val">29°C</div>
-                    <div class="loc-val"><i class="mdi mdi-map-marker"></i> JAKARTA SEL.</div>
+                    <div class="temp-val">{{ weather.temp }}°C</div>
+                    <div class="loc-val">
+                        <i class="mdi mdi-map-marker"></i> {{ weather.city }}
+                    </div>
                 </div>
             </div>
             <div class="sholat-list-mini">
@@ -340,20 +342,26 @@
         jam: "", tanggal: "",
         dataNews: [], 
         
-        filteredAgenda: [], 
-        upcomingAgenda: [], 
-        listHariKosong: [], 
-        currentAgenda: {},
-        currentIndex: 0,
+        // Data Agenda
+        filteredAgenda: [], upcomingAgenda: [], listHariKosong: [], 
+        currentAgenda: {}, currentIndex: 0,
 
+        // === DATA CUACA BARU ===
+        weather: {
+            temp: 0,             // Suhu
+            city: "Memuat...",   // Nama Kota
+            iconClass: "wi-day-sunny", // Default Icon
+            desc: ""             // Deskripsi (Cerah/Hujan)
+        },
+
+        // Data Lain
         quotes: [
             { text: "Integritas adalah melakukan hal yang benar, bahkan ketika tidak ada orang yang melihat.", author: "C.S. Lewis" },
             { text: "Bekerja keraslah dalam kesunyian, biarkan kesuksesanmu yang membuat keributan.", author: "Inspirasi" },
             { text: "Pelayanan publik adalah amanah, bukan sekadar pekerjaan rutin.", author: "Birokrasi Bersih" },
             { text: "Waktu adalah modal utama. Gunakan dengan bijak untuk hasil terbaik.", author: "Manajemen Waktu" }
         ],
-        currentQuote: {},
-        quoteIndex: 0,
+        currentQuote: {}, quoteIndex: 0,
 
         finance: { pagu: 15000000000, realisasi: 8500000000, sisa: 6500000000, persen: 56 },
         pnbp: { total: 1250000000 },
@@ -365,6 +373,7 @@
         setInterval(this.updateTime, 1000);
         this.getNews(); 
         this.getAgenda();
+        this.getCuaca(); // Panggil Cuaca Pertama Kali
         this.currentQuote = this.quotes[0];
     }
 
@@ -372,6 +381,9 @@
         setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
         setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
         
+        // Update Cuaca tiap 15 Menit (Gak perlu sering2 biar hemat request)
+        setInterval(() => this.getCuaca(), 900000); 
+
         this.generateNext7Days();
         setInterval(() => this.generateNext7Days(), 3600000);
 
@@ -388,6 +400,8 @@
 
     methodsVue = {
         ...methodsVue,
+        
+        // ... (Function formatRupiah, updateTime, getDayNum, dll biarkan TETAP ADA) ...
         formatRupiahShort: function(num) {
             if(num >= 1000000000) return (num/1000000000).toFixed(1) + ' M';
             if(num >= 1000000) return (num/1000000).toFixed(1) + ' Jt';
@@ -399,7 +413,6 @@
             const days = ["MINGGU", "SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
             const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
             this.tanggal = `${days[d.getDay()]}, ${d.getDate()} ${m[d.getMonth()]} ${d.getFullYear()}`;
-            
             const h = d.getHours();
             if(h<4) this.nextPrayer='Subuh'; else if(h<12) this.nextPrayer='Dzuhur';
             else if(h<15) this.nextPrayer='Ashar'; else if(h<18) this.nextPrayer='Maghrib';
@@ -414,88 +427,82 @@
             const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
             return dateStr ? m[new Date(dateStr).getMonth()] : m[new Date().getMonth()]; 
         },
-        
-        // METHOD BARU: Generate 5 HARI KERJA ke depan (Skip Sabtu/Minggu)
         generateNext7Days: function() {
-            let list = [];
-            let d = new Date();
-            let added = 0; // Hitung berapa hari kerja yang udah dapet
-            let i = 1;     // Counter hari besok, lusa, dst
-
-            // Loop sampai kita dapet 5 hari kerja
+            let list = []; let d = new Date(); let added = 0; let i = 1;
             while(added < 5) {
-                let next = new Date(d);
-                next.setDate(d.getDate() + i);
-                let dayOfWeek = next.getDay(); // 0 = Minggu, 6 = Sabtu
-
-                // LOGIC: Hanya ambil jika BUKAN Sabtu (6) dan BUKAN Minggu (0)
+                let next = new Date(d); next.setDate(d.getDate() + i);
+                let dayOfWeek = next.getDay(); 
                 if(dayOfWeek !== 0 && dayOfWeek !== 6) {
-                    let year = next.getFullYear();
-                    let month = String(next.getMonth() + 1).padStart(2, '0');
-                    let day = String(next.getDate()).padStart(2, '0');
-                    list.push(`${year}-${month}-${day}`);
-                    added++; // Nambah 1 kuota hari kerja
+                    let year = next.getFullYear(); let month = String(next.getMonth() + 1).padStart(2, '0'); let day = String(next.getDate()).padStart(2, '0');
+                    list.push(`${year}-${month}-${day}`); added++;
                 }
-                
-                i++; // Cek hari berikutnya
+                i++;
             }
             this.listHariKosong = list;
         },
-
         getNews: function() { axios.get('<?= base_url() ?>/api/news/news').then(res => { if(res.data.status) this.dataNews = res.data.data; }).catch(e=>{}); },
         
+        // ... (Function getAgenda yang udah FIX tadi biarin disini) ...
         getAgenda: function() { 
             axios.get('<?= base_url() ?>/api/display/agenda').then(res => { 
                 let rawData = [];
-                if(res.data.status && Array.isArray(res.data.data)) {
-                    rawData = res.data.data;
-                }
-
-                // === 1. TANGGAL HARI INI ===
+                if(res.data.status && Array.isArray(res.data.data)) { rawData = res.data.data; }
                 const d = new Date();
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                const todayStr = `${year}-${month}-${day}`; 
+                const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; 
+                const limit = new Date(); limit.setDate(d.getDate() + 7); 
+                const limitStr = `${limit.getFullYear()}-${String(limit.getMonth() + 1).padStart(2, '0')}-${String(limit.getDate()).padStart(2, '0')}`;
 
-                // === 2. BATAS TANGGAL 7 HARI ===
-                const limit = new Date();
-                limit.setDate(d.getDate() + 7); 
-                const lYear = limit.getFullYear();
-                const lMonth = String(limit.getMonth() + 1).padStart(2, '0');
-                const lDay = String(limit.getDate()).padStart(2, '0');
-                const limitStr = `${lYear}-${lMonth}-${lDay}`;
-
-                // === 3. FILTER LOGIC ===
-                
-                // A. Agenda Hari Ini (Tetap tampil walau hari Sabtu/Minggu, siapa tau ada lembur)
                 this.filteredAgenda = rawData.filter(item => item.tgl_agenda === todayStr);
-
-                // B. Agenda Berikutnya (SKIP SABTU & MINGGU)
-                this.upcomingAgenda = rawData
-                    .filter(item => {
-                        // Cek Harinya
-                        const dateItem = new Date(item.tgl_agenda);
-                        const dayNum = dateItem.getDay(); // 0 = Minggu, 6 = Sabtu
-
-                        // SYARAT TAMPIL:
-                        // 1. Tanggal > Hari Ini
-                        // 2. Tanggal <= 7 Hari ke depan
-                        // 3. BUKAN Sabtu (6)
-                        // 4. BUKAN Minggu (0)
-                        return item.tgl_agenda > todayStr && 
-                               item.tgl_agenda <= limitStr && 
-                               dayNum !== 6 && dayNum !== 0; 
-                    })
-                    .sort((a,b) => new Date(a.tgl_agenda) - new Date(b.tgl_agenda));
-                
-                // Init Slide
+                this.upcomingAgenda = rawData.filter(item => {
+                        const dateItem = new Date(item.tgl_agenda); const dayNum = dateItem.getDay();
+                        return item.tgl_agenda > todayStr && item.tgl_agenda <= limitStr && dayNum !== 6 && dayNum !== 0; 
+                    }).sort((a,b) => new Date(a.tgl_agenda) - new Date(b.tgl_agenda));
                 if(this.filteredAgenda.length > 0) this.currentAgenda = this.filteredAgenda[0];
-
-            }).catch(e=>{ 
-                console.log("Error mengambil data agenda:", e); 
-            }); 
+            }).catch(e=>{}); 
         },
+
+        // === FUNCTION CUACA BARU ===
+        getCuaca: function() {
+            axios.get('<?= base_url() ?>/api/display/cuaca').then(res => {
+                // Sesuai struktur return di Cuaca.php: res.data.data
+                if(res.data.status && res.data.data) {
+                    const w = res.data.data;
+                    
+                    // 1. Ambil Suhu (dibulatkan)
+                    this.weather.temp = Math.round(w.main.temp);
+                    
+                    // 2. Ambil Nama Kota
+                    // Kalau namanya kepanjangan "Jakarta Selatan", kita singkat biar rapi
+                    let kota = w.name.toUpperCase();
+                    kota = kota.replace("JAKARTA SELATAN", "JAKARTA SEL.");
+                    this.weather.city = kota;
+
+                    // 3. Mapping Icon (Dari kode OWM ke Class Weather Icons)
+                    // Ambil kode icon (misal "01d")
+                    const iconCode = w.weather[0].icon;
+                    this.weather.iconClass = this.mapIcon(iconCode);
+                    
+                    // 4. Deskripsi singkat (opsional)
+                    this.weather.desc = w.weather[0].main; 
+                }
+            }).catch(e => console.log("Gagal memuat cuaca"));
+        },
+
+        // Helper: Ubah Kode OWM jadi Class CSS 'weather-icons'
+        mapIcon: function(code) {
+            const map = {
+                '01d': 'wi-day-sunny',       '01n': 'wi-night-clear',
+                '02d': 'wi-day-cloudy',      '02n': 'wi-night-alt-cloudy',
+                '03d': 'wi-cloud',           '03n': 'wi-cloud',
+                '04d': 'wi-cloudy',          '04n': 'wi-cloudy',
+                '09d': 'wi-showers',         '09n': 'wi-showers',
+                '10d': 'wi-rain',            '10n': 'wi-rain',
+                '11d': 'wi-thunderstorm',    '11n': 'wi-thunderstorm',
+                '13d': 'wi-snow',            '13n': 'wi-snow',
+                '50d': 'wi-fog',             '50n': 'wi-fog'
+            };
+            return map[code] || 'wi-day-sunny'; // Default kalau gak ketemu
+        }
     }
 </script>
 <?php $this->endSection("js") ?>
