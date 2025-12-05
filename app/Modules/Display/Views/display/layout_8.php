@@ -257,8 +257,8 @@
                     
                     <div v-if="filteredAgenda.length > 0" :key="'agenda-'+currentIndex" class="ag-item">
                         <div class="date-badge">
-                            <div class="ag-date-big">{{ getDayNum(currentAgenda.waktu_tanggal) }}</div>
-                            <span class="ag-date-month">{{ getMonthName(currentAgenda.waktu_tanggal) }}</span>
+                            <div class="ag-date-big">{{ getDayNum(currentAgenda.tgl_agenda) }}</div>
+                            <span class="ag-date-month">{{ getMonthName(currentAgenda.tgl_agenda) }}</span>
                         </div>
                         <div class="ag-title">{{ currentAgenda.nama_agenda }}</div>
                         <div class="ag-meta">
@@ -284,8 +284,8 @@
             <div class="up-list" v-if="upcomingAgenda.length > 0">
                 <div class="up-item" v-for="(item, idx) in upcomingAgenda.slice(0, 3)" :key="idx">
                     <div class="up-date-box">
-                        <div class="up-d-num">{{ getDayNum(item.waktu_tanggal) }}</div>
-                        <div class="up-d-mo">{{ getMonthNameShort(item.waktu_tanggal) }}</div>
+                        <div class="up-d-num">{{ getDayNum(item.tgl_agenda) }}</div>
+                        <div class="up-d-mo">{{ getMonthNameShort(item.tgl_agenda) }}</div>
                     </div>
                     <div class="up-content">
                         <div class="up-title">{{ item.nama_agenda }}</div>
@@ -340,14 +340,12 @@
         jam: "", tanggal: "",
         dataNews: [], 
         
-        // Data Agenda Logic
-        filteredAgenda: [], // Agenda Hari Ini
-        upcomingAgenda: [], // Agenda Besok dst
-        listHariKosong: [], // Generator tanggal kosong
+        filteredAgenda: [], 
+        upcomingAgenda: [], 
+        listHariKosong: [], 
         currentAgenda: {},
         currentIndex: 0,
 
-        // Logic Quote
         quotes: [
             { text: "Integritas adalah melakukan hal yang benar, bahkan ketika tidak ada orang yang melihat.", author: "C.S. Lewis" },
             { text: "Bekerja keraslah dalam kesunyian, biarkan kesuksesanmu yang membuat keributan.", author: "Inspirasi" },
@@ -374,11 +372,9 @@
         setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
         setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
         
-        // Generate Tanggal Kosong saat load
         this.generateNext7Days();
-        setInterval(() => this.generateNext7Days(), 3600000); // Update tiap jam
+        setInterval(() => this.generateNext7Days(), 3600000);
 
-        // Slide Logic
         setInterval(() => {
             if(this.filteredAgenda.length > 0) {
                 this.currentIndex = (this.currentIndex + 1) % this.filteredAgenda.length;
@@ -419,7 +415,6 @@
             return dateStr ? m[new Date(dateStr).getMonth()] : m[new Date().getMonth()]; 
         },
         
-        // METHOD BARU: Generate 7 hari ke depan
         generateNext7Days: function() {
             let list = [];
             let d = new Date();
@@ -439,19 +434,21 @@
         getAgenda: function() { 
             axios.get('<?= base_url() ?>/api/display/agenda').then(res => { 
                 let rawData = [];
-                // Cek status API
                 if(res.data.status && Array.isArray(res.data.data)) {
                     rawData = res.data.data;
                 }
 
-                // === SETUP TANGGAL HARI INI (Local Time Safe) ===
+                // [FIX] DEBUG: PASTIKAN DATA MASUK
+                console.log("Agenda Data:", rawData);
+
+                // === 1. TANGGAL HARI INI ===
                 const d = new Date();
                 const year = d.getFullYear();
                 const month = String(d.getMonth() + 1).padStart(2, '0');
                 const day = String(d.getDate()).padStart(2, '0');
                 const todayStr = `${year}-${month}-${day}`; 
 
-                // === SETUP BATAS TANGGAL (7 Hari Kedepan) ===
+                // === 2. BATAS TANGGAL 7 HARI ===
                 const limit = new Date();
                 limit.setDate(d.getDate() + 7); 
                 const lYear = limit.getFullYear();
@@ -459,17 +456,17 @@
                 const lDay = String(limit.getDate()).padStart(2, '0');
                 const limitStr = `${lYear}-${lMonth}-${lDay}`;
 
-                // === FILTER LOGIC ===
+                // === 3. FILTER LOGIC [FIX: PAKE 'tgl_agenda'] ===
                 
                 // A. Agenda Hari Ini
-                this.filteredAgenda = rawData.filter(item => item.waktu_tanggal === todayStr);
+                this.filteredAgenda = rawData.filter(item => item.tgl_agenda === todayStr);
 
                 // B. Agenda Minggu Ini (Besok s/d 7 Hari Lagi)
                 this.upcomingAgenda = rawData
                     .filter(item => {
-                        return item.waktu_tanggal > todayStr && item.waktu_tanggal <= limitStr;
+                        return item.tgl_agenda > todayStr && item.tgl_agenda <= limitStr;
                     })
-                    .sort((a,b) => new Date(a.waktu_tanggal) - new Date(b.waktu_tanggal));
+                    .sort((a,b) => new Date(a.tgl_agenda) - new Date(b.tgl_agenda));
                 
                 // Init Slide
                 if(this.filteredAgenda.length > 0) this.currentAgenda = this.filteredAgenda[0];
