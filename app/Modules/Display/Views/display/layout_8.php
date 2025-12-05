@@ -451,9 +451,6 @@
                     rawData = res.data.data;
                 }
 
-                // [FIX] DEBUG: PASTIKAN DATA MASUK
-                console.log("Agenda Data:", rawData);
-
                 // === 1. TANGGAL HARI INI ===
                 const d = new Date();
                 const year = d.getFullYear();
@@ -469,15 +466,26 @@
                 const lDay = String(limit.getDate()).padStart(2, '0');
                 const limitStr = `${lYear}-${lMonth}-${lDay}`;
 
-                // === 3. FILTER LOGIC [FIX: PAKE 'tgl_agenda'] ===
+                // === 3. FILTER LOGIC ===
                 
-                // A. Agenda Hari Ini
+                // A. Agenda Hari Ini (Tetap tampil walau hari Sabtu/Minggu, siapa tau ada lembur)
                 this.filteredAgenda = rawData.filter(item => item.tgl_agenda === todayStr);
 
-                // B. Agenda Minggu Ini (Besok s/d 7 Hari Lagi)
+                // B. Agenda Berikutnya (SKIP SABTU & MINGGU)
                 this.upcomingAgenda = rawData
                     .filter(item => {
-                        return item.tgl_agenda > todayStr && item.tgl_agenda <= limitStr;
+                        // Cek Harinya
+                        const dateItem = new Date(item.tgl_agenda);
+                        const dayNum = dateItem.getDay(); // 0 = Minggu, 6 = Sabtu
+
+                        // SYARAT TAMPIL:
+                        // 1. Tanggal > Hari Ini
+                        // 2. Tanggal <= 7 Hari ke depan
+                        // 3. BUKAN Sabtu (6)
+                        // 4. BUKAN Minggu (0)
+                        return item.tgl_agenda > todayStr && 
+                               item.tgl_agenda <= limitStr && 
+                               dayNum !== 6 && dayNum !== 0; 
                     })
                     .sort((a,b) => new Date(a.tgl_agenda) - new Date(b.tgl_agenda));
                 
