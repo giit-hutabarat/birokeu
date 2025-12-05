@@ -186,6 +186,59 @@
         .upcoming-box { margin-top: 50px; }
         .ticker-fixed { position: fixed; bottom: 0; }
     }
+
+    /* SCROLLBAR UP AGENDA*/
+
+    /* === ANIMASI RUNNING TEXT (VERTIKAL & HORIZONTAL) === */
+
+    /* 1. Vertical Scroll (List Agenda Naik) */
+    .v-scroll-window {
+        height: 260px; /* Tinggi jendela tampilan (muat sktr 3 item) */
+        overflow: hidden;
+        position: relative;
+    }
+    .v-scroll-content {
+        /* Animasi naik ke atas */
+        animation: scrollUp 20s linear infinite;
+    }
+    /* Kalau di-hover mouse, berhenti sebentar biar enak dibaca */
+    .v-scroll-content:hover { animation-play-state: paused; }
+
+    @keyframes scrollUp {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-50%); } /* Naik setengah (karena list diduplikasi) */
+    }
+
+    /* 2. Horizontal Scroll (Judul Panjang ke Kiri) */
+    .h-marquee-wrap {
+        overflow: hidden;
+        white-space: nowrap;
+        max-width: 100%;
+        display: block;
+        position: relative;
+    }
+    .h-marquee-txt {
+        display: inline-block;
+        padding-left: 100%; /* Mulai dari kanan luar */
+        animation: scrollLeft 15s linear infinite;
+    }
+    
+    /* Versi Seamless (Teks diduplikasi biar nyambung terus) */
+    .h-marquee-seamless {
+        display: flex;
+        gap: 50px; /* Jarak antar duplikat teks */
+        width: max-content;
+        animation: scrollLeftSeamless 20s linear infinite;
+    }
+
+    @keyframes scrollLeft {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+    @keyframes scrollLeftSeamless {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); } /* Geser setengah */
+    }
 </style>
 <?php $this->endSection("style") ?>
 
@@ -280,17 +333,69 @@
             </div>
         </div>
 
-        <div class="upcoming-box">
+<div class="upcoming-box">
             <div class="up-label">AGENDA HARI KERJA BERIKUTNYA</div>
             
-            <div class="up-list" v-if="upcomingAgenda.length > 0">
-                <div class="up-item" v-for="(item, idx) in upcomingAgenda.slice(0, 3)" :key="idx">
+            <div v-if="upcomingAgenda.length > 3" class="v-scroll-window">
+                <div class="v-scroll-content">
+                    <div class="up-item" v-for="(item, idx) in upcomingAgenda" :key="'a-'+idx">
+                        <div class="up-date-box">
+                            <div class="up-d-num">{{ getDayNum(item.tgl_agenda) }}</div>
+                            <div class="up-d-mo">{{ getMonthNameShort(item.tgl_agenda) }}</div>
+                        </div>
+                        <div class="up-content">
+                            <div v-if="item.nama_agenda.length > 40" class="h-marquee-wrap">
+                                <div class="h-marquee-seamless">
+                                    <span>{{ item.nama_agenda }}</span>
+                                    <span>{{ item.nama_agenda }}</span> </div>
+                            </div>
+                            <div v-else class="up-title">{{ item.nama_agenda }}</div>
+                            
+                            <div class="up-time">
+                                <i class="mdi mdi-clock-outline" style="font-size:0.8rem; margin-right:5px;"></i> 
+                                {{ item.waktu }} WIB - {{ item.tempat_agenda }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="up-item" v-for="(item, idx) in upcomingAgenda" :key="'b-'+idx">
+                        <div class="up-date-box">
+                            <div class="up-d-num">{{ getDayNum(item.tgl_agenda) }}</div>
+                            <div class="up-d-mo">{{ getMonthNameShort(item.tgl_agenda) }}</div>
+                        </div>
+                        <div class="up-content">
+                            <div v-if="item.nama_agenda.length > 40" class="h-marquee-wrap">
+                                <div class="h-marquee-seamless">
+                                    <span>{{ item.nama_agenda }}</span>
+                                    <span>{{ item.nama_agenda }}</span>
+                                </div>
+                            </div>
+                            <div v-else class="up-title">{{ item.nama_agenda }}</div>
+
+                            <div class="up-time">
+                                <i class="mdi mdi-clock-outline" style="font-size:0.8rem; margin-right:5px;"></i> 
+                                {{ item.waktu }} WIB - {{ item.tempat_agenda }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="up-list" v-else-if="upcomingAgenda.length > 0">
+                <div class="up-item" v-for="(item, idx) in upcomingAgenda" :key="idx">
                     <div class="up-date-box">
                         <div class="up-d-num">{{ getDayNum(item.tgl_agenda) }}</div>
                         <div class="up-d-mo">{{ getMonthNameShort(item.tgl_agenda) }}</div>
                     </div>
                     <div class="up-content">
-                        <div class="up-title">{{ item.nama_agenda }}</div>
+                        <div v-if="item.nama_agenda.length > 40" class="h-marquee-wrap">
+                            <div class="h-marquee-seamless">
+                                <span>{{ item.nama_agenda }}</span>
+                                <span>{{ item.nama_agenda }}</span>
+                            </div>
+                        </div>
+                        <div v-else class="up-title">{{ item.nama_agenda }}</div>
+
                         <div class="up-time">
                             <i class="mdi mdi-clock-outline" style="font-size:0.8rem; margin-right:5px;"></i> 
                             {{ item.waktu }} WIB - {{ item.tempat_agenda }}
