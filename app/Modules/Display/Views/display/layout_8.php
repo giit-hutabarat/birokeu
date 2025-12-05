@@ -583,3 +583,4 @@
     }
 </script>
 <?php $this->endSection("js") ?>
+<!-- EOF -->
