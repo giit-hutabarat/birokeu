@@ -76,5 +76,5 @@ $base_url = base_url();
         <div class="dot dot-2"></div>
         <div class="dot dot-3"></div>
     </div>
-    <div class="loader-text">MEMPROSES AKSES</div>
+    <div class="loader-text">Memuat data...</div>
 </div>
