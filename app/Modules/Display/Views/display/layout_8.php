@@ -271,31 +271,29 @@
                 </transition-group>
             </div>
         </div>
-
-    <div class="upcoming-box">
-            <div class="up-label">AGENDA BERIKUTNYA</div>
-            
-            <div class="up-list" v-if="upcomingAgenda.length > 0">
-                <div class="up-item" v-for="(item, idx) in upcomingAgenda.slice(0, 2)" :key="idx">
-                    <div class="up-date-box">
-                        <div class="up-d-num">{{ getDayNum(item.waktu_tanggal) }}</div>
-                        <div class="up-d-mo">{{ getMonthNameShort(item.waktu_tanggal) }}</div>
-                    </div>
-                    <div class="up-content">
-                        <div class="up-title">{{ item.nama_agenda }}</div>
-                        <div class="up-time">
-                            <i class="mdi mdi-clock-outline" style="font-size:0.8rem; margin-right:5px;"></i> 
-                            {{ item.waktu }} WIB - {{ item.tempat_agenda }}
+        <div class="upcoming-box">
+                    <div class="up-label">AGENDA 7 HARI MENDATANG</div>
+                    
+                    <div class="up-list" v-if="upcomingAgenda.length > 0">
+                        <div class="up-item" v-for="(item, idx) in upcomingAgenda.slice(0, 3)" :key="idx">
+                            <div class="up-date-box">
+                                <div class="up-d-num">{{ getDayNum(item.waktu_tanggal) }}</div>
+                                <div class="up-d-mo">{{ getMonthNameShort(item.waktu_tanggal) }}</div>
+                            </div>
+                            <div class="up-content">
+                                <div class="up-title">{{ item.nama_agenda }}</div>
+                                <div class="up-time">
+                                    <i class="mdi mdi-clock-outline" style="font-size:0.8rem; margin-right:5px;"></i> 
+                                    {{ item.waktu }} WIB - {{ item.tempat_agenda }}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div v-else style="opacity: 0.5; font-style: italic; font-size: 0.9rem; margin-top: 10px;">
-                Belum ada agenda mendatang.
-            </div>
-        </div>
-    </div>
+                    <div v-else style="opacity: 0.5; font-style: italic; font-size: 0.9rem; margin-top: 10px; color: #aaa;">
+                        Belum ada agenda mendatang.
+                    </div>
+                </div>
 
     <div class="ticker-fixed">
         <div class="ticker-lbl">INFO TERKINI</div>
@@ -402,47 +400,45 @@
         getAgenda: function() { 
             axios.get('<?= base_url() ?>/api/display/agenda').then(res => { 
                 let rawData = [];
-                if(res.data.status) {
+                // Cek status API, pastikan ada datanya
+                if(res.data.status && Array.isArray(res.data.data)) {
                     rawData = res.data.data;
                 }
 
-                // === DEBUG: INJECT DUMMY DATA BUAT NGETES TAMPILAN ===
-                // Hapus bagian ini nanti kalau database sudah ready
-                rawData.push({
-                    nama_agenda: "Rapat Koordinasi Anggaran 2026 (CONTOH)",
-                    waktu: "08:00",
-                    tempat_agenda: "Aula Utama",
-                    waktu_tanggal: "2025-12-06" // Tanggal BESOK
-                });
-                rawData.push({
-                    nama_agenda: "Kunjungan Kerja BPK (CONTOH)",
-                    waktu: "13:00",
-                    tempat_agenda: "Ruang Rapat 1",
-                    waktu_tanggal: "2025-12-07" // Tanggal LUSA
-                });
-                // =====================================================
-
-                // Logic Tanggal
+                // === 1. SETUP TANGGAL HARI INI (Local Time Safe) ===
                 const d = new Date();
                 const year = d.getFullYear();
                 const month = String(d.getMonth() + 1).padStart(2, '0');
                 const day = String(d.getDate()).padStart(2, '0');
                 const todayStr = `${year}-${month}-${day}`; 
 
-                console.log("Hari ini:", todayStr); // Cek Console browser (F12)
+                // === 2. SETUP BATAS TANGGAL (7 Hari Kedepan) ===
+                const limit = new Date();
+                limit.setDate(d.getDate() + 7); // Tambah 7 hari
+                const lYear = limit.getFullYear();
+                const lMonth = String(limit.getMonth() + 1).padStart(2, '0');
+                const lDay = String(limit.getDate()).padStart(2, '0');
+                const limitStr = `${lYear}-${lMonth}-${lDay}`;
 
-                // 1. Filter Hari Ini
+                // === 3. FILTER LOGIC ===
+                
+                // A. Agenda Hari Ini (Persis tanggal sekarang)
                 this.filteredAgenda = rawData.filter(item => item.waktu_tanggal === todayStr);
 
-                // 2. Filter Besok dst
+                // B. Agenda Minggu Ini (Besok s/d 7 Hari Lagi)
+                // Logic: Tanggal > Hari Ini  DAN  Tanggal <= Batas 7 Hari
                 this.upcomingAgenda = rawData
-                    .filter(item => item.waktu_tanggal > todayStr)
+                    .filter(item => {
+                        return item.waktu_tanggal > todayStr && item.waktu_tanggal <= limitStr;
+                    })
                     .sort((a,b) => new Date(a.waktu_tanggal) - new Date(b.waktu_tanggal));
                 
-                // Init Slide
+                // Init Slide Utama (Kalau ada agenda hari ini)
                 if(this.filteredAgenda.length > 0) this.currentAgenda = this.filteredAgenda[0];
 
-            }).catch(e=>{ console.log(e); }); 
+            }).catch(e=>{ 
+                console.log("Error mengambil data agenda:", e); 
+            }); 
         },
     }
 </script>
