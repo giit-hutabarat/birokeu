@@ -101,9 +101,9 @@
     .quote-text { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; font-style: italic; font-weight: 300; line-height: 1.4; color: #fff; }
     .quote-author { margin-top: 15px; font-size: 1rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
 
-    /* === NEW MODULE: UPCOMING AGENDA (PAGINATION STYLE) === */
+    /* === MODULE: UPCOMING AGENDA (PAGINATION STYLE) === */
     .upcoming-box {
-        margin-top: auto; /* Push to bottom */
+        margin-top: auto; 
         padding-top: 20px;
         border-top: 1px solid rgba(255,255,255,0.1);
         padding-right: 50px;
@@ -111,7 +111,7 @@
     .up-label { font-size: 0.8rem; color: #666; letter-spacing: 2px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
     
     .up-list-container {
-        min-height: 280px; /* Jaga tinggi tetap biar gak lompat */
+        min-height: 350px; /* Dipertinggi sedikit karena 4 items */
         position: relative;
     }
     
@@ -122,7 +122,7 @@
     .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 50%; transition: 0.3s; }
     .dot.active { background: var(--accent-gold); transform: scale(1.2); }
 
-    .up-list { display: flex; flex-direction: column; gap: 15px; }
+    .up-list { display: flex; flex-direction: column; gap: 12px; } /* Gap diperkecil biar muat 4 */
     .up-item { display: flex; align-items: center; gap: 15px; opacity: 0.9; }
     
     .up-date-box { 
@@ -134,22 +134,28 @@
 
     .up-d-num { font-family: 'Teko'; font-size: 1.4rem; line-height: 1; font-weight: 600; }
     .up-d-mo { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
-    .up-content { flex: 1; overflow: hidden; } /* Overflow hidden penting buat marquee */
+    .up-content { flex: 1; overflow: hidden; } 
     
     /* Horizontal Marquee (Judul Panjang) */
     .h-marquee-wrap {
-        overflow: hidden; white-space: nowrap; max-width: 100%; position: relative;
-        mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+        overflow: hidden; 
+        white-space: nowrap; 
+        max-width: 100%; 
+        position: relative;
+        /* FIX: Huruf awal gak ketutup lagi. Masking cuma di kanan */
+        mask-image: linear-gradient(to right, black 0%, black 95%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to right, black 0%, black 95%, transparent 100%);
     }
     .h-marquee-content {
         display: inline-block; padding-left: 0;
-        animation: scrollLeft 15s linear infinite;
+        /* FIX: Speed diperlambat jadi 35s */
+        animation: scrollLeft 35s linear infinite; 
     }
     .no-anim { animation: none; }
 
     @keyframes scrollLeft {
         0% { transform: translateX(0); }
-        20% { transform: translateX(0); } /* Diam sebentar di awal */
+        15% { transform: translateX(0); } /* Diam lebih lama di awal */
         100% { transform: translateX(-100%); }
     }
     
@@ -161,7 +167,8 @@
     .slide-enter-from { opacity: 0; transform: translateY(30px); }
     .slide-leave-to { opacity: 0; transform: translateY(-30px); }
 
-    .slide-up-enter-active, .slide-up-leave-active { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    /* FIX: Slide Up diperlambat jadi 1.5s */
+    .slide-up-enter-active, .slide-up-leave-active { transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
     .slide-up-enter { opacity: 0; transform: translateY(20px); }
     .slide-up-leave-to { opacity: 0; transform: translateY(-20px); }
 
@@ -348,7 +355,7 @@
                 </transition-group>
 
                 <div class="up-list" v-else>
-                    <div class="up-item" v-for="(dateStr, idx) in listHariKosong.slice(0, 3)" :key="idx" style="opacity: 0.5;">
+                    <div class="up-item" v-for="(dateStr, idx) in listHariKosong.slice(0, 4)" :key="idx" style="opacity: 0.5;">
                         <div class="up-date-box empty">
                             <div class="up-d-num">{{ getDayNum(dateStr) }}</div>
                             <div class="up-d-mo">{{ getMonthNameShort(dateStr) }}</div>
@@ -395,9 +402,9 @@
         upcomingAgenda: [], 
         listHariKosong: [], 
         
-        // PAGINATION LOGIC
+        // PAGINATION LOGIC (FIX: 4 Items)
         upcomingPage: 0,
-        itemsPerPage: 3,
+        itemsPerPage: 4,
 
         currentAgenda: {},
         currentIndex: 0,
@@ -433,7 +440,7 @@
     mountedVue = function() {
         setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
         setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
-        setInterval(() => this.getCuaca(), 900000); // 15 Menit
+        setInterval(() => this.getCuaca(), 900000); 
 
         this.generateNext7Days();
         setInterval(() => this.generateNext7Days(), 3600000);
@@ -457,7 +464,7 @@
             } else {
                 this.upcomingPage = 0;
             }
-        }, 6000);
+        }, 8000); // 8 Detik per halaman
     }
 
     methodsVue = {
@@ -518,38 +525,23 @@
                     rawData = res.data.data;
                 }
 
-                // === 1. TANGGAL HARI INI ===
                 const d = new Date();
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                const todayStr = `${year}-${month}-${day}`; 
+                const todayStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; 
+                const limit = new Date(); limit.setDate(d.getDate() + 7); 
+                const limitStr = `${limit.getFullYear()}-${String(limit.getMonth() + 1).padStart(2, '0')}-${String(limit.getDate()).padStart(2, '0')}`;
 
-                // === 2. BATAS TANGGAL 7 HARI ===
-                const limit = new Date();
-                limit.setDate(d.getDate() + 7); 
-                const lYear = limit.getFullYear();
-                const lMonth = String(limit.getMonth() + 1).padStart(2, '0');
-                const lDay = String(limit.getDate()).padStart(2, '0');
-                const limitStr = `${lYear}-${lMonth}-${lDay}`;
-
-                // === 3. FILTER LOGIC [FIX: PAKE 'tgl_agenda'] ===
-                
-                // A. Agenda Hari Ini
                 this.filteredAgenda = rawData.filter(item => item.tgl_agenda === todayStr);
 
-                // B. Agenda Hari Kerja Berikutnya (SKIP SABTU & MINGGU)
                 this.upcomingAgenda = rawData
                     .filter(item => {
                         const dateItem = new Date(item.tgl_agenda);
-                        const dayNum = dateItem.getDay(); // 0 = Minggu, 6 = Sabtu
+                        const dayNum = dateItem.getDay(); 
                         return item.tgl_agenda > todayStr && 
                                item.tgl_agenda <= limitStr && 
                                dayNum !== 6 && dayNum !== 0; 
                     })
                     .sort((a,b) => new Date(a.tgl_agenda) - new Date(b.tgl_agenda));
                 
-                // Init Slide
                 if(this.filteredAgenda.length > 0) this.currentAgenda = this.filteredAgenda[0];
 
             }).catch(e=>{ 
@@ -557,7 +549,6 @@
             }); 
         },
 
-        // === FUNCTION CUACA LIVE ===
         getCuaca: function() {
             axios.get('<?= base_url() ?>/api/display/cuaca').then(res => {
                 if(res.data.status && res.data.data) {
