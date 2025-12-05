@@ -8,8 +8,8 @@
         --dark-bg: #121212;
         --dark-gradient: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
         --light-bg: #f8f9fa;
-        --accent-gold: #D4AF37; /* Emas yang lebih elegan (Metallic Gold) */
-        --accent-red: #A31414; /* Merah Kejaksaan yang lebih dalam */
+        --accent-gold: #D4AF37;
+        --accent-red: #A31414;
         --text-dark: #333;
         --text-light: #fff;
     }
@@ -34,13 +34,11 @@
         background: var(--light-bg);
         color: var(--text-dark);
         display: flex; flex-direction: column;
-        /* Padding disesuaikan supaya tidak tertutup layer dark */
         padding: 60px 60px 100px 60vw; 
         justify-content: center;
         z-index: 1;
     }
 
-    /* Background Pattern Halus */
     .bg-pattern {
         position: absolute; top:0; left:0; width:100%; height:100%;
         background-image: 
@@ -53,180 +51,134 @@
     /* === LAYER 2: AGENDA SIDE (KIRI - DARK) === */
     .layer-dark {
         position: absolute; top: 0; left: 0; bottom: 0;
-        width: 60%; /* Sedikit diperlebar */
+        width: 60%;
         background: var(--dark-gradient);
         color: var(--text-light);
-        /* Diagonal Cut yang lebih tajam */
         clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%);
-        padding: 50px 120px 80px 50px; 
+        padding: 40px 120px 80px 50px; 
         display: flex; flex-direction: column;
         z-index: 10;
-        /* Shadow drop filter untuk efek kedalaman di atas light layer */
         filter: drop-shadow(10px 0 20px rgba(0,0,0,0.5));
     }
 
-    /* === HEADER WITH LOGO (REQUEST USER) === */
+    /* === HEADER & BRAND === */
     .brand-box { 
-        margin-bottom: 50px; 
-        display: flex; 
-        align-items: center; /* Center Vertikal */
-        gap: 25px; /* Jarak Logo dan Teks */
+        margin-bottom: 30px; 
+        display: flex; align-items: center; gap: 20px; 
         border-bottom: 1px solid rgba(255,255,255,0.1);
-        padding-bottom: 20px;
+        padding-bottom: 15px;
     }
+    .brand-logo-img { width: 80px; height: auto; filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); }
+    .brand-title { font-family: 'Teko', sans-serif; font-size: 3.5rem; line-height: 0.85; font-weight: 700; text-transform: uppercase; color: #fff; letter-spacing: 1px; }
+    .brand-sub { font-size: 0.9rem; letter-spacing: 3px; color: var(--accent-gold); text-transform: uppercase; font-weight: 600; margin-top: 5px; }
 
-    /* Logo Styling */
-    .brand-logo-img {
-        width: 100px; /* Ukuran Logo */
-        height: auto;
-        filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3)); /* Glow Emas Halus */
-    }
-
-    .brand-text-col {
-        display: flex; flex-direction: column;
-    }
-
-    .brand-title { 
-        font-family: 'Teko', sans-serif; 
-        font-size: 4rem; 
-        line-height: 0.85; 
-        font-weight: 700;
-        text-transform: uppercase; 
-        color: #fff;
-        letter-spacing: 1px;
-    }
-    
-    .brand-sub { 
-        font-size: 1rem; 
-        letter-spacing: 4px; 
-        color: var(--accent-gold); 
-        text-transform: uppercase; 
-        font-weight: 600;
-        margin-top: 5px; 
-    }
-
-    /* === AGENDA STYLING === */
-    .agenda-container {
-        flex: 1; display: flex; flex-direction: column; justify-content: center;
-        position: relative;
+    /* === MAIN DISPLAY AREA === */
+    .main-display {
+        flex: 1; display: flex; flex-direction: column; justify-content: flex-start;
+        position: relative; padding-top: 20px;
     }
     
     .agenda-label { 
         font-size: 0.9rem; font-weight: 700; letter-spacing: 3px; color: #888; 
-        text-transform: uppercase; margin-bottom: 30px; display: block;
+        text-transform: uppercase; margin-bottom: 20px; display: block;
         border-left: 3px solid var(--accent-gold); padding-left: 15px;
     }
 
-    .ag-item { position: absolute; width: 100%; top: 15%; } 
+    /* Transition Group Wrapper */
+    .display-content { position: relative; width: 100%; min-height: 250px; }
+    .ag-item { position: absolute; width: 100%; top: 0; } 
 
-    /* Tanggal yang menonjol */
-    .date-badge {
-        display: inline-flex;
-        align-items: baseline;
-        gap: 10px;
-        margin-bottom: 10px;
-    }
-    .ag-date-big {
-        font-family: 'Teko'; font-size: 8rem; line-height: 0.8; 
-        color: var(--accent-gold); 
-        text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
-    }
-    .ag-date-month {
-        font-size: 2.5rem; font-weight: 800; text-transform: uppercase; 
-        color: rgba(255,255,255,0.8);
-    }
+    /* Agenda Style */
+    .date-badge { display: inline-flex; align-items: baseline; gap: 10px; margin-bottom: 5px; }
+    .ag-date-big { font-family: 'Teko'; font-size: 6rem; line-height: 0.8; color: var(--accent-gold); text-shadow: 2px 2px 0px rgba(0,0,0,0.5); }
+    .ag-date-month { font-size: 2rem; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.8); }
+    .ag-title { font-size: 2.2rem; font-weight: 700; line-height: 1.2; margin-bottom: 20px; color: #fff; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .ag-meta { display: flex; gap: 30px; font-size: 1.1rem; color: #ccc; background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 8px; backdrop-filter: blur(5px); width: fit-content; }
+    .ag-meta i { color: var(--accent-gold); margin-right: 8px; }
 
-    .ag-title {
-        font-size: 2.8rem; font-weight: 700; line-height: 1.2; margin-bottom: 30px;
-        color: #fff;
-        /* Line clamp untuk membatasi text kepanjangan */
-        display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+    /* Quote Style */
+    .quote-icon { font-size: 4rem; color: var(--accent-gold); opacity: 0.4; line-height: 1; margin-bottom: 10px; }
+    .quote-text { font-family: 'Montserrat', sans-serif; font-size: 1.8rem; font-style: italic; font-weight: 300; line-height: 1.4; color: #fff; }
+    .quote-author { margin-top: 15px; font-size: 1rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+
+    /* === NEW MODULE: UPCOMING AGENDA === */
+    .upcoming-box {
+        margin-top: auto; /* Push to bottom */
+        padding-top: 20px;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-right: 50px;
     }
-    
-    .ag-meta {
-        display: flex; gap: 40px; font-size: 1.2rem; color: #ccc; 
-        background: rgba(255,255,255,0.05);
-        padding: 15px 25px; border-radius: 8px;
-        backdrop-filter: blur(5px);
-        width: fit-content;
+    .up-label { font-size: 0.8rem; color: #666; letter-spacing: 2px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
+    .up-list { display: flex; flex-direction: column; gap: 15px; }
+    .up-item { display: flex; align-items: center; gap: 15px; opacity: 0.8; }
+    .up-date-box { 
+        background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.3);
+        color: var(--accent-gold); padding: 5px 10px; border-radius: 4px; 
+        text-align: center; min-width: 60px;
     }
-    .ag-meta i { color: var(--accent-gold); margin-right: 10px; }
+    .up-d-num { font-family: 'Teko'; font-size: 1.4rem; line-height: 1; font-weight: 600; }
+    .up-d-mo { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .up-content { flex: 1; }
+    .up-title { font-size: 1rem; color: #fff; font-weight: 600; line-height: 1.2; margin-bottom: 2px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+    .up-time { font-size: 0.85rem; color: #999; }
 
     /* Transitions */
     .slide-enter-active, .slide-leave-active { transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1); }
     .slide-enter-from { opacity: 0; transform: translateY(30px); }
     .slide-leave-to { opacity: 0; transform: translateY(-30px); }
 
-    /* === RIGHT SIDE (FINANCE & STATS) === */
-    .finance-row { display: flex; gap: 50px; margin-bottom: 60px; }
-    
+    /* RIGHT SIDE WIDGETS */
+    .finance-row { display: flex; gap: 40px; margin-bottom: 40px; }
     .stat-card { flex: 1; }
     .stat-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
     .stat-label { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #999; letter-spacing: 1px; }
-    .stat-value { font-family: 'Teko'; font-size: 5rem; font-weight: 500; line-height: 0.8; color: #222; }
-    
-    /* Progress Bar Modern */
-    .bar-bg { width: 100%; height: 10px; background: #e0e0e0; border-radius: 20px; overflow: hidden; position: relative; }
+    .stat-value { font-family: 'Teko'; font-size: 4.5rem; font-weight: 500; line-height: 0.8; color: #222; }
+    .bar-bg { width: 100%; height: 8px; background: #e0e0e0; border-radius: 20px; overflow: hidden; }
     .bar-fill { height: 100%; background: linear-gradient(90deg, #222, #555); width: 0; transition: width 1.5s ease; border-radius: 20px; }
     .bar-fill.gold { background: linear-gradient(90deg, #D4AF37, #FDD835); }
+    .stat-footer { margin-top: 8px; font-size: 0.9rem; color: #666; font-weight: 500; display: flex; justify-content: space-between;}
 
-    .stat-footer { margin-top: 10px; font-size: 1rem; color: #666; font-weight: 500; display: flex; justify-content: space-between;}
+    .utility-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+    .clock-widget { border-left: 5px solid var(--accent-red); padding-left: 20px; }
+    .clock-time { font-family: 'Teko'; font-size: 5rem; line-height: 0.8; color: #222; }
+    .clock-date { font-size: 1rem; font-weight: 700; text-transform: uppercase; color: #666; margin-top: 5px; letter-spacing: 1px;}
+    .weather-widget { display: flex; align-items: center; gap: 15px; }
+    .temp-val { font-size: 2.5rem; font-weight: 800; color: #222; }
+    .loc-val { font-weight: 600; text-transform: uppercase; color: #888; font-size: 0.8rem; }
 
-    /* Utility Widgets */
-    .utility-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-    
-    .clock-widget { border-left: 6px solid var(--accent-red); padding-left: 25px; }
-    .clock-time { font-family: 'Teko'; font-size: 5.5rem; line-height: 0.8; color: #222; }
-    .clock-date { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; color: #666; margin-top: 5px; letter-spacing: 1px;}
-
-    .weather-widget { display: flex; align-items: center; gap: 20px; }
-    .temp-val { font-size: 3rem; font-weight: 800; color: #222; }
-    .loc-val { font-weight: 600; text-transform: uppercase; color: #888; font-size: 0.9rem; }
-
-    /* Sholat List */
     .sholat-list-mini {
-        grid-column: 1 / -1; margin-top: 40px;
-        display: flex; justify-content: space-between; 
-        background: #fff; padding: 20px 30px; border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        grid-column: 1 / -1; margin-top: 30px; display: flex; justify-content: space-between; 
+        background: #fff; padding: 15px 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
     }
     .sl-item { text-align: center; opacity: 0.4; transition: 0.3s; position: relative;}
-    .sl-item.active { opacity: 1; transform: translateY(-5px); }
+    .sl-item.active { opacity: 1; transform: translateY(-3px); }
     .sl-item.active .sl-name { color: var(--accent-red); font-weight: 800; }
-    .sl-name { font-size: 0.8rem; text-transform: uppercase; margin-bottom: 5px; font-weight: 600; }
-    .sl-time { font-family: 'Teko'; font-size: 1.8rem; line-height: 1; color: #222; }
+    .sl-name { font-size: 0.75rem; text-transform: uppercase; margin-bottom: 3px; font-weight: 600; }
+    .sl-time { font-family: 'Teko'; font-size: 1.6rem; line-height: 1; color: #222; }
 
-    /* === TICKER (NEWS) === */
+    /* TICKER */
     .ticker-fixed {
-        position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
+        position: absolute; bottom: 0; left: 0; width: 100%; height: 60px;
         background: #000; color: white;
         display: flex; align-items: center; z-index: 50;
         border-top: 4px solid var(--accent-gold);
     }
     .ticker-lbl { 
-        background: var(--accent-gold); color: #000; height: 100%; padding: 0 50px; 
-        font-weight: 900; font-size: 1.4rem; display: flex; align-items: center;
-        clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%); 
-        padding-right: 80px; z-index: 20; font-family: 'Teko'; letter-spacing: 2px;
+        background: var(--accent-gold); color: #000; height: 100%; padding: 0 40px; 
+        font-weight: 900; font-size: 1.2rem; display: flex; align-items: center;
+        clip-path: polygon(0 0, 100% 0, 85% 100%, 0% 100%); padding-right: 70px; z-index: 20; font-family: 'Teko'; letter-spacing: 2px;
     }
     .ticker-view { flex: 1; overflow: hidden; height: 100%; display: flex; align-items: center; }
-    .ticker-txt { 
-        white-space: nowrap; animation: marquee 35s linear infinite; 
-        font-size: 1.2rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;
-    }
+    .ticker-txt { white-space: nowrap; animation: marquee 35s linear infinite; font-size: 1.1rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
     @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-    /* RESPONSIVE */
     @media screen and (max-width: 1024px) {
         .wrapper { flex-direction: column; overflow-y: auto; height: auto; padding-bottom: 70px; }
-        .layer-dark { width: 100%; clip-path: none; height: auto; min-height: 500px; padding: 40px; position: relative; }
-        .layer-light { width: 100%; padding: 40px; position: relative; }
+        .layer-dark { width: 100%; clip-path: none; height: auto; min-height: 600px; padding: 40px; }
+        .layer-light { width: 100%; padding: 40px; }
         .ag-item { position: relative; top: auto; }
-        .brand-title { font-size: 2.5rem; }
+        .upcoming-box { margin-top: 50px; }
         .ticker-fixed { position: fixed; bottom: 0; }
-        .ag-date-big { font-size: 5rem; }
-        .finance-row { flex-direction: column; gap: 30px; }
-        .utility-grid { grid-template-columns: 1fr; }
     }
 </style>
 <?php $this->endSection("style") ?>
@@ -235,53 +187,44 @@
     
     <div class="layer-light">
         <div class="bg-pattern"></div>
-        
         <div class="finance-row">
             <div class="stat-card">
                 <div class="stat-header">
                     <span class="stat-label">Realisasi Anggaran</span>
                     <div class="stat-value">{{ finance.persen }}<span style="font-size: 2.5rem">%</span></div>
                 </div>
-                <div class="bar-bg">
-                    <div class="bar-fill" :style="{ width: finance.persen + '%' }"></div>
-                </div>
+                <div class="bar-bg"><div class="bar-fill" :style="{ width: finance.persen + '%' }"></div></div>
                 <div class="stat-footer">
                     <span>Terpakai: {{ formatRupiahShort(finance.realisasi) }}</span>
                     <span>Pagu: {{ formatRupiahShort(finance.pagu) }}</span>
                 </div>
             </div>
-
             <div class="stat-card">
                 <div class="stat-header">
                     <span class="stat-label">Total PNBP</span>
                     <div class="stat-value" style="color: var(--accent-gold);">{{ formatRupiahShort(pnbp.total) }}</div>
                 </div>
-                <div class="bar-bg">
-                    <div class="bar-fill gold" style="width: 35%;"></div> </div>
+                <div class="bar-bg"><div class="bar-fill gold" style="width: 35%;"></div></div>
                 <div class="stat-footer">
                     <span>Update Terkini</span>
                     <i class="mdi mdi-chart-line" style="color: green;"></i>
                 </div>
             </div>
         </div>
-
         <div class="utility-grid">
             <div class="clock-widget">
                 <div class="clock-time">{{ jam }}</div>
                 <div class="clock-date">{{ tanggal }}</div>
             </div>
-            
             <div class="weather-widget">
-                <i class="wi wi-day-sunny text-warning" style="font-size: 5rem;"></i>
+                <i class="wi wi-day-sunny text-warning" style="font-size: 4rem;"></i>
                 <div>
                     <div class="temp-val">29°C</div>
-                    <div class="loc-val"><i class="mdi mdi-map-marker"></i> JAKARTA SELATAN</div>
+                    <div class="loc-val"><i class="mdi mdi-map-marker"></i> JAKARTA SEL.</div>
                 </div>
             </div>
-            
             <div class="sholat-list-mini">
-                <div v-for="(time, name) in jadwalSholat" :key="name" 
-                     class="sl-item" :class="{ 'active': name === nextPrayer }">
+                <div v-for="(time, name) in jadwalSholat" :key="name" class="sl-item" :class="{ 'active': name === nextPrayer }">
                     <div class="sl-name">{{ name }}</div>
                     <div class="sl-time">{{ time }}</div>
                 </div>
@@ -291,41 +234,60 @@
 
     <div class="layer-dark">
         <div class="brand-box">
-            <img src="<?= base_url('assets/images/logo-kejaksaan.png') ?>" class="brand-logo-img" alt="Logo">
+            <img src="<?= base_url('assets/images/logo_kejaksaan.png') ?>" class="brand-logo-img" alt="Logo">
             <div class="brand-text-col">
                 <div class="brand-title">BIRO KEUANGAN</div>
                 <span class="brand-sub">KEJAKSAAN AGUNG REPUBLIK INDONESIA</span>
             </div>
         </div>
 
-        <span class="agenda-label">AGENDA PRIORITAS HARI INI</span>
+        <div class="main-display">
+            <span class="agenda-label">
+                {{ filteredAgenda.length > 0 ? 'AGENDA HARI INI' : 'MOTIVASI HARI INI' }}
+            </span>
 
-        <div class="agenda-container">
-            <transition-group name="slide">
-                <div v-if="dataAgenda.length > 0" :key="currentIndex" class="ag-item">
+            <div class="display-content">
+                <transition-group name="slide" mode="out-in">
                     
-                    <div class="date-badge">
-                        <div class="ag-date-big">{{ getDayNum(currentAgenda.waktu_tanggal) }}</div>
-                        <span class="ag-date-month">{{ getMonthName(currentAgenda.waktu_tanggal) }}</span>
+                    <div v-if="filteredAgenda.length > 0" :key="'agenda-'+currentIndex" class="ag-item">
+                        <div class="date-badge">
+                            <div class="ag-date-big">{{ getDayNum(currentAgenda.waktu_tanggal) }}</div>
+                            <span class="ag-date-month">{{ getMonthName(currentAgenda.waktu_tanggal) }}</span>
+                        </div>
+                        <div class="ag-title">{{ currentAgenda.nama_agenda }}</div>
+                        <div class="ag-meta">
+                            <span><i class="mdi mdi-clock-outline"></i> {{ currentAgenda.waktu }} WIB</span>
+                            <span style="border-left: 1px solid #555; padding-left: 15px; margin-left: -15px;"></span>
+                            <span><i class="mdi mdi-map-marker"></i> {{ currentAgenda.tempat_agenda }}</span>
+                        </div>
                     </div>
                     
-                    <div class="ag-title">
-                        {{ currentAgenda.nama_agenda }} 
+                    <div v-else :key="'quote-'+quoteIndex" class="ag-item">
+                        <i class="mdi mdi-format-quote-close quote-icon"></i>
+                        <div class="quote-text">"{{ currentQuote.text }}"</div>
+                        <div class="quote-author">— {{ currentQuote.author }}</div>
                     </div>
 
-                    <div class="ag-meta">
-                        <span><i class="mdi mdi-clock-outline"></i> {{ currentAgenda.waktu }} WIB</span>
-                        <span style="border-left: 1px solid #555; padding-left: 20px; margin-left: -20px;"></span>
-                        <span><i class="mdi mdi-map-marker"></i> {{ currentAgenda.tempat_agenda }}</span>
-                    </div>
-                </div>
-                
-                <div v-if="dataAgenda.length === 0" :key="'empty'" class="ag-item">
-                    <div class="ag-title">TIDAK ADA JADWAL KEGIATAN</div>
-                    <div class="ag-meta">Sistem Monitoring Aktif</div>
-                </div>
-            </transition-group>
+                </transition-group>
+            </div>
         </div>
+
+        <div class="upcoming-box" v-if="upcomingAgenda.length > 0">
+            <div class="up-label">AGENDA BERIKUTNYA</div>
+            <div class="up-list">
+                <div class="up-item" v-for="(item, idx) in upcomingAgenda.slice(0, 2)" :key="idx">
+                    <div class="up-date-box">
+                        <div class="up-d-num">{{ getDayNum(item.waktu_tanggal) }}</div>
+                        <div class="up-d-mo">{{ getMonthNameShort(item.waktu_tanggal) }}</div>
+                    </div>
+                    <div class="up-content">
+                        <div class="up-title">{{ item.nama_agenda }}</div>
+                        <div class="up-time"><i class="mdi mdi-clock-outline" style="font-size:0.8rem; margin-right:5px;"></i> {{ item.waktu }} WIB - {{ item.tempat_agenda }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="ticker-fixed">
@@ -353,46 +315,60 @@
     dataVue = {
         ...dataVue,
         jam: "", tanggal: "",
+        dataNews: [], 
         
-        dataNews: [], dataAgenda: [],
+        // Data Agenda Logic
+        filteredAgenda: [], // Agenda Hari Ini
+        upcomingAgenda: [], // Agenda Besok dst
+        currentAgenda: {},
+        currentIndex: 0,
+
+        // Logic Quote
+        quotes: [
+            { text: "Integritas adalah melakukan hal yang benar, bahkan ketika tidak ada orang yang melihat.", author: "C.S. Lewis" },
+            { text: "Bekerja keraslah dalam kesunyian, biarkan kesuksesanmu yang membuat keributan.", author: "Inspirasi" },
+            { text: "Pelayanan publik adalah amanah, bukan sekadar pekerjaan rutin.", author: "Birokrasi Bersih" },
+            { text: "Waktu adalah modal utama. Gunakan dengan bijak untuk hasil terbaik.", author: "Manajemen Waktu" }
+        ],
+        currentQuote: {},
+        quoteIndex: 0,
+
         finance: { pagu: 15000000000, realisasi: 8500000000, sisa: 6500000000, persen: 56 },
         pnbp: { total: 1250000000 },
         jadwalSholat: { Subuh: '04:12', Dzuhur: '11:51', Ashar: '15:15', Maghrib: '17:58', Isya: '19:12' },
         nextPrayer: 'Ashar',
-        
-        // Logic Slide Agenda
-        currentIndex: 0,
-        currentAgenda: {}
     }
 
     createdVue = function() {
         setInterval(this.updateTime, 1000);
         this.getNews(); 
         this.getAgenda();
+        this.currentQuote = this.quotes[0];
     }
 
     mountedVue = function() {
         setInterval(() => this.getNews(), <?= $news_refresh; ?> * 1000);
         setInterval(() => this.getAgenda(), <?= $agenda_refresh; ?> * 1000);
 
-        // Auto Slide Agenda tiap 6 detik
+        // Slide Logic
         setInterval(() => {
-            if(this.dataAgenda.length > 0) {
-                this.currentIndex = (this.currentIndex + 1) % this.dataAgenda.length;
-                this.currentAgenda = this.dataAgenda[this.currentIndex];
+            if(this.filteredAgenda.length > 0) {
+                this.currentIndex = (this.currentIndex + 1) % this.filteredAgenda.length;
+                this.currentAgenda = this.filteredAgenda[this.currentIndex];
+            } else {
+                this.quoteIndex = (this.quoteIndex + 1) % this.quotes.length;
+                this.currentQuote = this.quotes[this.quoteIndex];
             }
-        }, 6000);
+        }, 8000); 
     }
 
     methodsVue = {
         ...methodsVue,
-        
         formatRupiahShort: function(num) {
             if(num >= 1000000000) return (num/1000000000).toFixed(1) + ' M';
             if(num >= 1000000) return (num/1000000).toFixed(1) + ' Jt';
             return (num/1000).toFixed(0) + ' K';
         },
-
         updateTime: function() {
             const d = new Date();
             this.jam = `${addZero(d.getHours())}:${addZero(d.getMinutes())}`;
@@ -405,25 +381,43 @@
             else if(h<15) this.nextPrayer='Ashar'; else if(h<18) this.nextPrayer='Maghrib';
             else if(h<19) this.nextPrayer='Isya'; else this.nextPrayer='Subuh';
         },
-        
-        // Helpers
         getDayNum: function(dateStr) { return dateStr ? new Date(dateStr).getDate() : new Date().getDate(); },
         getMonthName: function(dateStr) { 
             const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
             return dateStr ? m[new Date(dateStr).getMonth()] : m[new Date().getMonth()]; 
         },
-
+        getMonthNameShort: function(dateStr) { 
+            const m = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGS", "SEP", "OKT", "NOV", "DES"];
+            return dateStr ? m[new Date(dateStr).getMonth()] : m[new Date().getMonth()]; 
+        },
         getNews: function() { axios.get('<?= base_url() ?>/api/news/news').then(res => { if(res.data.status) this.dataNews = res.data.data; }).catch(e=>{}); },
+        
         getAgenda: function() { 
             axios.get('<?= base_url() ?>/api/display/agenda').then(res => { 
-                if(res.data.status && res.data.data.length > 0) {
-                    this.dataAgenda = res.data.data;
-                    // Fallback date
-                    this.dataAgenda.forEach(item => { if(!item.waktu_tanggal) item.waktu_tanggal = new Date().toISOString().slice(0,10); });
-                    // Set initial
-                    this.currentAgenda = this.dataAgenda[0];
+                if(res.data.status) {
+                    const rawData = res.data.data;
+                    
+                    // === PERBAIKAN LOGIC TANGGAL LOKAL (WIB SAFE) ===
+                    const d = new Date();
+                    const year = d.getFullYear();
+                    // Pakai padStart biar bulan/tanggal 1 digit jadi 01, 02, dst
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const todayStr = `${year}-${month}-${day}`; // Hasil: "2025-12-05" (Sesuai jam komputer)
+
+                    // 1. Agenda Hari Ini (Filter Persis Tanggal Ini)
+                    this.filteredAgenda = rawData.filter(item => item.waktu_tanggal === todayStr);
+
+                    // 2. Agenda Berikutnya (Hanya Tanggal > Hari Ini)
+                    // Kita sort Ascending (dari tanggal terdekat besok)
+                    this.upcomingAgenda = rawData
+                        .filter(item => item.waktu_tanggal > todayStr)
+                        .sort((a,b) => new Date(a.waktu_tanggal) - new Date(b.waktu_tanggal));
+
+                    // Init Slide
+                    if(this.filteredAgenda.length > 0) this.currentAgenda = this.filteredAgenda[0];
                 }
-            }).catch(e=>{}); 
+            }).catch(e=>{ console.log("Error API:", e); }); 
         },
     }
 </script>

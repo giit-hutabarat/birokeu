@@ -33,9 +33,9 @@ class Database extends Config
     public $default = [
         'DSN'      => '',
         'hostname' => 'localhost',
-        'username' => 'root',
-        'password' => 'PASSWORD',
-        'database' => 'db_birokeu',
+        'username' => 'gajisquad_uTron',
+        'password' => 'PassTr0n#.',
+        'database' => 'gajisquad_tron',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
         'pConnect' => false,
