@@ -136,17 +136,6 @@ $uri = service('uri');
                             <v-list-item link href="<?= base_url('cuaca'); ?>" class="pl-8"><v-list-item-icon><v-icon small>mdi-weather-cloudy</v-icon></v-list-item-icon><v-list-item-title>Cuaca</v-list-item-title></v-list-item>
                         </v-list-group>
                         
-                        <!-- Menu Group Masjid (Tambahkan Ikon pada Submenu) -->
-                        <v-list-group prepend-icon="mdi-mosque">
-                            <template v-slot:activator>
-                                <v-list-item-content><v-list-item-title>Masjid</v-list-item-title></v-list-item-content>
-                            </template>
-                            <!-- 🔑 Ikon ditambahkan di sini. Class 'pl-8' untuk indentasi -->
-                            <v-list-item link href="<?= base_url('jadwalsholat'); ?>" class="pl-8"><v-list-item-icon><v-icon small>mdi-clock-check-outline</v-icon></v-list-item-icon><v-list-item-title>Jadwal Sholat</v-list-item-title></v-list-item>
-                            <v-list-item link href="<?= base_url('agamaquotes'); ?>" class="pl-8"><v-list-item-icon><v-icon small>mdi-format-quote-open</v-icon></v-list-item-icon><v-list-item-title>Quotes Agama</v-list-item-title></v-list-item>
-                            <v-list-item link href="<?= base_url('keuanganmasjid'); ?>" class="pl-8"><v-list-item-icon><v-icon small>mdi-cash-multiple</v-icon></v-list-item-icon><v-list-item-title>Keuangan Masjid</v-list-item-title></v-list-item>
-                        </v-list-group>
-
                         <v-list-item link href="<?= base_url('user'); ?>">
                             <v-list-item-icon><v-icon>mdi-account-multiple</v-icon></v-list-item-icon>
                             <v-list-item-content><v-list-item-title>Pengguna</v-list-item-title></v-list-item-content>
