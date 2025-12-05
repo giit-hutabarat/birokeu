@@ -272,9 +272,10 @@
             </div>
         </div>
 
-        <div class="upcoming-box" v-if="upcomingAgenda.length > 0">
+    <div class="upcoming-box">
             <div class="up-label">AGENDA BERIKUTNYA</div>
-            <div class="up-list">
+            
+            <div class="up-list" v-if="upcomingAgenda.length > 0">
                 <div class="up-item" v-for="(item, idx) in upcomingAgenda.slice(0, 2)" :key="idx">
                     <div class="up-date-box">
                         <div class="up-d-num">{{ getDayNum(item.waktu_tanggal) }}</div>
@@ -282,12 +283,18 @@
                     </div>
                     <div class="up-content">
                         <div class="up-title">{{ item.nama_agenda }}</div>
-                        <div class="up-time"><i class="mdi mdi-clock-outline" style="font-size:0.8rem; margin-right:5px;"></i> {{ item.waktu }} WIB - {{ item.tempat_agenda }}</div>
+                        <div class="up-time">
+                            <i class="mdi mdi-clock-outline" style="font-size:0.8rem; margin-right:5px;"></i> 
+                            {{ item.waktu }} WIB - {{ item.tempat_agenda }}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
+            <div v-else style="opacity: 0.5; font-style: italic; font-size: 0.9rem; margin-top: 10px;">
+                Belum ada agenda mendatang.
+            </div>
+        </div>
     </div>
 
     <div class="ticker-fixed">
@@ -394,30 +401,48 @@
         
         getAgenda: function() { 
             axios.get('<?= base_url() ?>/api/display/agenda').then(res => { 
+                let rawData = [];
                 if(res.data.status) {
-                    const rawData = res.data.data;
-                    
-                    // === PERBAIKAN LOGIC TANGGAL LOKAL (WIB SAFE) ===
-                    const d = new Date();
-                    const year = d.getFullYear();
-                    // Pakai padStart biar bulan/tanggal 1 digit jadi 01, 02, dst
-                    const month = String(d.getMonth() + 1).padStart(2, '0');
-                    const day = String(d.getDate()).padStart(2, '0');
-                    const todayStr = `${year}-${month}-${day}`; // Hasil: "2025-12-05" (Sesuai jam komputer)
-
-                    // 1. Agenda Hari Ini (Filter Persis Tanggal Ini)
-                    this.filteredAgenda = rawData.filter(item => item.waktu_tanggal === todayStr);
-
-                    // 2. Agenda Berikutnya (Hanya Tanggal > Hari Ini)
-                    // Kita sort Ascending (dari tanggal terdekat besok)
-                    this.upcomingAgenda = rawData
-                        .filter(item => item.waktu_tanggal > todayStr)
-                        .sort((a,b) => new Date(a.waktu_tanggal) - new Date(b.waktu_tanggal));
-
-                    // Init Slide
-                    if(this.filteredAgenda.length > 0) this.currentAgenda = this.filteredAgenda[0];
+                    rawData = res.data.data;
                 }
-            }).catch(e=>{ console.log("Error API:", e); }); 
+
+                // === DEBUG: INJECT DUMMY DATA BUAT NGETES TAMPILAN ===
+                // Hapus bagian ini nanti kalau database sudah ready
+                rawData.push({
+                    nama_agenda: "Rapat Koordinasi Anggaran 2026 (CONTOH)",
+                    waktu: "08:00",
+                    tempat_agenda: "Aula Utama",
+                    waktu_tanggal: "2025-12-06" // Tanggal BESOK
+                });
+                rawData.push({
+                    nama_agenda: "Kunjungan Kerja BPK (CONTOH)",
+                    waktu: "13:00",
+                    tempat_agenda: "Ruang Rapat 1",
+                    waktu_tanggal: "2025-12-07" // Tanggal LUSA
+                });
+                // =====================================================
+
+                // Logic Tanggal
+                const d = new Date();
+                const year = d.getFullYear();
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                const todayStr = `${year}-${month}-${day}`; 
+
+                console.log("Hari ini:", todayStr); // Cek Console browser (F12)
+
+                // 1. Filter Hari Ini
+                this.filteredAgenda = rawData.filter(item => item.waktu_tanggal === todayStr);
+
+                // 2. Filter Besok dst
+                this.upcomingAgenda = rawData
+                    .filter(item => item.waktu_tanggal > todayStr)
+                    .sort((a,b) => new Date(a.waktu_tanggal) - new Date(b.waktu_tanggal));
+                
+                // Init Slide
+                if(this.filteredAgenda.length > 0) this.currentAgenda = this.filteredAgenda[0];
+
+            }).catch(e=>{ console.log(e); }); 
         },
     }
 </script>
