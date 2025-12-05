@@ -5,12 +5,6 @@ if(!isset($routes))
     $routes = \Config\Services::routes(true);
 }
 
-// ✅ KOREKSI UTAMA: DEFINISI VARIABEL WAJIB
-// Variabel ini harus didefinisikan agar tidak Undefined saat baris 23 dieksekusi.
-// Rute ini diarahkan ke Controller Setup yang ada di Modul Sidang.
-$adminSetupController = '\\App\\Modules\\Sidang\\Controllers\\AdminSetupController';
-
-
 // ====================================================================
 // KELOMPOK 1: WEB ROUTE (HALAMAN ADMIN)
 // ====================================================================
@@ -18,10 +12,6 @@ $adminSetupController = '\\App\\Modules\\Sidang\\Controllers\\AdminSetupControll
 $routes->group('setting', ['filter' => 'auth_session', 'namespace' => 'App\\Modules\\Setting\\Controllers'], function($routes) use ($adminSetupController){ 
 	$routes->add('general', 'Setting::general');
 	$routes->add('app', 'Setting::app');
-	
-    // RUTE MENU OTP: Ini adalah rute yang dipanggil dari Dashboard
-    // URL: /setting/otp-sidang
-    $routes->add('otp-sidang', 'Setting::otpSetup');    
 });
 
 // ====================================================================
